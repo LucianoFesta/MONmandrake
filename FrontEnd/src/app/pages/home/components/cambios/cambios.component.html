@@ -1,0 +1,33 @@
+<div class="buscador">
+    <mat-form-field>
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>¿Qué deseas buscar? </mat-label>
+        <input matInput #searchTag (input)="searchNovedades()">
+    </mat-form-field>
+</div>
+
+<section>
+    <h2>Lista de cambios</h2>
+    
+    <div *ngIf="filteredNovedades.length > 0" class="divCard">
+        <mat-card *ngFor="let item of filteredNovedades" (click)="openDialog(item)">
+            <div class="contentCard">
+                <div class="iconChange">
+                    <span class="material-symbols-outlined">published_with_changes</span>
+                    <mat-card-content>{{ item.descripcion }}</mat-card-content>
+                </div>
+                <div>
+                    <button *ngFor="let etiqueta of item.etiquetas" 
+                            mat-raised-button
+                            [style.background-color]="valoresColores[etiqueta]">
+                        {{etiqueta}}
+                    </button>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+    
+    <div *ngIf="filteredNovedades.length == 0" class="listEmpty">
+        <p>No hay novedades con: " <b>{{searchTag.value}}</b> "</p> 
+    </div>
+</section>

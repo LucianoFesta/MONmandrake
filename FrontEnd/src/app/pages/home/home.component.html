@@ -1,0 +1,21 @@
+<div class="botonera">
+    <mat-button-toggle-group aria-label="Font Style">
+      <mat-button-toggle *ngFor="let item of itemsMenu" 
+        [routerLink]="item.url" 
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [checked]="router.url == item.url">
+        {{ item.name }}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <button mat-fab color="link">
+      <img src="assets/images/descarga.svg" alt="Foto perfil">
+    </button>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="divComponents">
+  <router-outlet></router-outlet>
+</div>
+

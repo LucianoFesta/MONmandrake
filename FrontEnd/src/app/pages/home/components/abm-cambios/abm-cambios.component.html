@@ -1,0 +1,35 @@
+<section>
+    <h2>Registrar un Cambio</h2>
+    
+    <form [formGroup]="formCreate" (ngSubmit)="submit()">
+        <div class="divFlex">
+            <mat-form-field>
+                <mat-label>Autor: </mat-label>
+                <input matInput formControlName="autor">
+                <mat-error *ngIf="isValidField('autor')">* El autor es obligatorio.</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Responsable: </mat-label>
+                <input matInput formControlName="responsable">
+                <mat-error *ngIf="isValidField('responsable')">* El responsable es obligatorio.</mat-error>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field>
+            <mat-label>Proyectos: </mat-label>
+            <mat-select formControlName="etiquetas" multiple>
+              <mat-option *ngFor="let etiqueta of etiquetas" [value]="etiqueta">
+                {{ etiqueta | titlecase }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isValidField('etiquetas')">* Seleccioná proyectos afectados.</mat-error>
+          </mat-form-field>
+        <mat-form-field>
+            <mat-label>Descripción: </mat-label>
+            <textarea matInput formControlName="descripcion"></textarea>
+            <mat-error *ngIf="isValidField('descripcion')">* Descripción del cambio obligatoria.</mat-error>
+        </mat-form-field>
+
+        <button class="btn" mat-raised-button type="submit"><mat-icon>save</mat-icon> Guardar Cambio</button>
+    </form>
+</section>

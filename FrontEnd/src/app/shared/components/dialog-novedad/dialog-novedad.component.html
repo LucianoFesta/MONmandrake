@@ -1,0 +1,24 @@
+<div class="dialog">
+  <h2 mat-dialog-title>{{ data.autor }} cargó el siguiente cambio:</h2>
+  <ul>
+    <li>
+      <span><b>Cambio: </b>{{ data.descripcion }}</span>
+    <li>
+      <span><b>Fecha de carga:</b> {{ data.created_at }}</span>
+    </li>
+    <li>
+      <span *ngIf="data.estado == 1">
+        <b>Estado:</b> Activo.
+      </span>
+      <span *ngIf="data.estado != 1">
+        <b>Estado:</b> Finalizado.
+      </span>
+    </li>
+    <li>
+      <b>Afecta a:</b> {{ data.etiquetas }}
+    </li>
+  </ul>
+  <div mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cerrar</button>
+  </div>
+</div>

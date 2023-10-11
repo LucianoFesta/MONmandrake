@@ -1,0 +1,14 @@
+.dialog{
+    width: 100vh;
+    margin: auto;
+}
+
+h2{
+    width: 100%;
+    background-color: rgb(236, 236, 236);
+    border-bottom: 1px rgb(133, 133, 133) solid;
+}
+
+ul li{
+    margin-top: 4px;
+}
