@@ -1,33 +1,29 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Novedad } from 'src/app/interfaces/novedad';
-import { NovedadesService } from 'src/app/services/novedades.service';
+import { Router } from '@angular/router';
+import { catchError, of } from 'rxjs';
+import { DbService } from 'src/app/services/db-service.service';
 
 @Component({
   selector: 'app-abm-cambios',
   templateUrl: './abm-cambios.component.html',
   styleUrls: ['./abm-cambios.component.css']
 })
-export class AbmCambiosComponent implements OnInit {
+
+export class AbmCambiosComponent{
 
   constructor( 
     private fb:FormBuilder,
-    private novedadService:NovedadesService
+    private dbService:DbService,
+    private router:Router
   ){}
 
-  ngOnInit(): void {
-    this.novedadService.getNovedadesJson().subscribe(data => this.listNovedades = data)
-  }
-
-  private listNovedades:Novedad[] = [];
-
   public etiquetas:string[] = [
-    "Abacom", "Web", "Autorizador", "JBOSS"
+    "Abacom", "Web", "Autorizador", "Jboss"
   ];
 
   public formCreate:FormGroup = this.fb.group({
-    id:[12],
     autor: ['', [ Validators.required ]],
     responsable: ['', [ Validators.required ]],
     etiquetas: ['', [Validators.required]],
@@ -48,15 +44,19 @@ export class AbmCambiosComponent implements OnInit {
     newNovedad.created_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     
-    this.listNovedades.push(newNovedad);
+    this.dbService.createNovedad(newNovedad).pipe(
+      catchError((e) => {
+        console.log(e)
+        return of()
+      })
+    ).subscribe(() => {
+      this.router.navigateByUrl('home');
+    })
 
-    console.log(this.listNovedades);
   };
 
   isValidField(field:string):boolean | null{
     return this.formCreate.controls[field].errors && this.formCreate.controls[field].touched;
   };
-
-
 
 }

@@ -5,9 +5,10 @@ mat-form-field{
 }
 
 .buscador{
-    background-color: var(--azul-global);
+    background: linear-gradient(45deg, var(--azul-global), var(--azul-claro));
     border-radius: 3px;
     margin-bottom: 50px;
+    box-shadow: 0 0 10px 10px var(--azul-claro);
 }
 
 section{
@@ -23,8 +24,8 @@ h2{
     left: -2px;
     background-color: var(--azul-global);
     color: aliceblue;
-    border-radius: 10px;
-    padding: 5px;
+    border-radius: 10px;  
+    padding: 5px 15px;
 }
 
 .divCard{
@@ -44,7 +45,7 @@ mat-card{
 }
 
 mat-card:hover{
-    background-color: var(--azul-global);
+    background: linear-gradient(45deg, var(--azul-global), var(--azul-claro));
     color: aliceblue;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -80,4 +81,14 @@ button {
     margin-top: 20px;
     background-color: var(--azul-claro);
     padding: 40px;
+}
+
+h2{
+    position: absolute;
+    top: -18px;
+    left: -2px;
+    background-color: var(--azul-global);
+    color: aliceblue;
+    border-radius: 10px;
+    padding: 5px 15px;
 }
