@@ -9,7 +9,6 @@ router = APIRouter(prefix="/novedades",
                    tags=["novedades"], 
                    responses={status.HTTP_404_NOT_FOUND: {"message":"No encontrado."}})
 
-listNovedades = []
 
 @router.get("/listado", response_model=List[Novedad], status_code=status.HTTP_200_OK)
 async def findAll():
@@ -65,8 +64,6 @@ async def editNovedad(novedad:Novedad, id:str):
     
     return buscarNovedad("_id", ObjectId(id))
 
-yo = '6526e19f1a5ef67d78752255'
-yo = '6526e19f1a5ef67d78752255'
 
 def buscarNovedad(campo:str, key):
     try:
