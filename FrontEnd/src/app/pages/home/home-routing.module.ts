@@ -13,6 +13,7 @@ const routes: Routes = [
             { path: '', component: CambiosComponent },
             { path: 'monitoreo', component: MonitoreoComponent },
             { path: 'cambios', component: AbmCambiosComponent },
+            { path: 'cambios/:id', component: AbmCambiosComponent },
         ]
     }
 ];

@@ -1,7 +1,8 @@
 <section>
-    <h2>Registrar un Cambio</h2>
+    <h2 *ngIf="!edit">Registrar un Cambio</h2>
+    <h2 *ngIf="edit">Modificar un Cambio</h2>
     
-    <form [formGroup]="formCreate" (ngSubmit)="submit()">
+    <form [formGroup]="formCreate">
         <div class="divFlex">
             <mat-form-field>
                 <mat-label>Autor: </mat-label>
@@ -30,6 +31,7 @@
             <mat-error *ngIf="isValidField('descripcion')">* Descripción del cambio obligatoria.</mat-error>
         </mat-form-field>
 
-        <button class="btn" mat-raised-button type="submit"><mat-icon>save</mat-icon> Guardar Cambio</button>
+        <button *ngIf="!edit" class="btn" mat-raised-button (click)="saveNovedad()"><mat-icon>save</mat-icon> Guardar Cambio</button>
+        <button *ngIf="edit" class="btn" mat-raised-button (click)="editNovedad()"><mat-icon>edit</mat-icon> Editar Cambio</button>
     </form>
 </section>

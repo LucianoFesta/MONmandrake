@@ -18,7 +18,18 @@
       <b>Afecta a:</b> {{ data.etiquetas }}
     </li>
   </ul>
-  <div mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cerrar</button>
+
+  <div class="divFlex">
+    <div class="divFlex">
+      <div mat-dialog-actions>
+        <button mat-button (click)="editNovedad(data.id)"><mat-icon>edit</mat-icon>Editar</button>
+      </div>
+      <div mat-dialog-actions>
+        <button mat-button (click)="eliminarNovedad(data.id)"><mat-icon>delete</mat-icon>Eliminar</button>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button mat-dialog-close><mat-icon>close</mat-icon>Cerrar</button>
+    </div>
   </div>
 </div>
