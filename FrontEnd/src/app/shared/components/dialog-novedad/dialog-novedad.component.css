@@ -17,3 +17,25 @@ ul li{
     display: flex;
     justify-content: space-around;
 }
+
+.btnEdit{
+    color: black;
+    background-color: var(--azul-claro);
+    transition: 0.2s all ease-in-out;
+}
+
+.btnEdit:hover{
+    color: white;
+    background-color: var(--azul-global);
+}
+
+.btnDelete{
+    color: black;
+    background-color: rgb(167, 98, 98);
+    transition: 0.2s all ease-in-out;
+}
+
+.btnDelete:hover{
+    color: white;
+    background-color: brown;
+}

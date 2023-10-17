@@ -18,6 +18,10 @@ section{
     border-radius: 3px;
 }
 
+span{
+    color: rgba(2, 99, 2, 0.623);
+}
+
 h2{
     position: absolute;
     top: -18px;
