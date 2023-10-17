@@ -82,14 +82,9 @@ export class CambiosComponent implements OnInit {
   }  
 
   openDialog(item:Novedad){
-    const dialog = this.dialog.open(DialogNovedadComponent,{
+    this.dialog.open(DialogNovedadComponent,{
       data: item
     });
-
-    dialog.afterClosed().subscribe(() => {
-      this.getNovedades();
-    })
-
   }
 
   searchNovedades() {
