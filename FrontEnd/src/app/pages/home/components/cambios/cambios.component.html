@@ -8,11 +8,16 @@
 
 <app-loader *ngIf="!loader"></app-loader>
 
+<!-- <pre>
+    {{ listNovedades | json }}
+</pre> -->
+
 <section *ngIf="loader" class="animate__animated animate__fadeIn">
     <h2>Lista de cambios</h2>
     
-    <div *ngIf="filteredNovedades.length > 0" class="divCard">
-        <mat-card *ngFor="let item of filteredNovedades" (click)="openDialog(item)">
+    <div *ngFor="let mes of sorted" class="divCard">
+        <h3>{{ mes.split('-')[0] | uppercase }} - {{ mes.split('-')[1] }}</h3>
+        <mat-card *ngFor="let item of filteredNovedades[mes]" (click)="openDialog(item)">
             <div class="contentCard">
                 <div class="iconChange">
                     <div class="divFecha">
@@ -35,7 +40,7 @@
         </mat-card>
     </div>
     
-    <div *ngIf="filteredNovedades.length == 0" class="listEmpty">
+    <div *ngIf="isEmpty(filteredNovedades)" class="listEmpty">
         <p>No hay novedades con: " <b>{{searchTag.value}}</b> "</p> 
     </div>
 </section>
