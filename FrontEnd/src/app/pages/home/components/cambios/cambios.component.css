@@ -11,15 +11,30 @@ mat-form-field{
     box-shadow: 0 0 10px 10px var(--azul-claro);
 }
 
+.etiquetas{
+    padding: 10px;
+}
+
+.divFecha{
+    display: flex;
+    font-size: 10px;
+    flex-direction: column;
+    align-items: center;
+    border: 1.5px black solid;
+    border-radius: 20px;
+    padding: 5px 15px;
+}
+
+.divFecha div:nth-child(2){
+    font-size: 25px;
+    padding: 3px;
+}
+
 section{
     position: relative;
     border: 1px var(--azul-global) solid;
     padding: 20px 0;
     border-radius: 3px;
-}
-
-span{
-    color: rgba(2, 99, 2, 0.623);
 }
 
 h2{
@@ -33,7 +48,7 @@ h2{
 }
 
 .divCard{
-    padding: 20px 0;
+    margin: 20px 0;
 }
 
 mat-card{
@@ -55,27 +70,25 @@ mat-card:hover{
 }
 
 button {
-    margin: 0px 3px;
-    padding: 3px; 
+    margin: 3px;
+    padding: 1px; 
+    cursor: none;
 }
 
 .contentCard{
     display: flex;
-    justify-content: space-between;
     align-items: center;
 }
-
-.mat-mdc-card-content:first-child{
-    padding-top: 0;
-}
-
-.mat-mdc-card-content:last-child{
-    padding-bottom: 0;
-} 
 
 .iconChange{
+    max-width: 10%;
+}
+
+.infoChange{
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 90%;
 }
 
 .listEmpty{

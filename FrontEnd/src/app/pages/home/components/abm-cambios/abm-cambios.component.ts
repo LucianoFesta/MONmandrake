@@ -48,7 +48,7 @@ export class AbmCambiosComponent implements OnInit{
   private idNovedad!:string;
 
   public etiquetas:string[] = [
-    "Abacom", "Web", "Autorizador", "Jboss"
+    "Abacom", "Web", "Autorizador", "Jboss", "Pepito", "SQL", "Openshift", "Servidor", "MongoDB"
   ];
 
   public formCreate:FormGroup = this.fb.group({

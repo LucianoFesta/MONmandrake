@@ -22,6 +22,11 @@ export class CambiosComponent implements OnInit {
     "Web": '#02a71d',
     "Jboss": '#605fb4',
     "Autorizador": '#e4be40',
+    "Pepito": '#e4be40',
+    "SQL": '#e4be40',
+    "MongoDB": '#e4be40',
+    "Openshift": '#e4be40',
+    "Servidor": '#e4be40',
   };
   
   constructor( 
