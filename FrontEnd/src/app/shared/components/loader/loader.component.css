@@ -1,0 +1,13 @@
+.divLoader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40vh;
+    width: 40vw;
+    margin: auto;
+}
+
+img{
+    height: 100px;
+    width: 100px;
+}

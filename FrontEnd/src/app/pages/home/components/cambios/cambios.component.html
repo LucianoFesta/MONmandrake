@@ -1,4 +1,4 @@
-<div class="buscador">
+<div class="buscador animate__animated animate__fadeIn">
     <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
         <mat-label>¿Qué deseas buscar? </mat-label>
@@ -6,7 +6,9 @@
     </mat-form-field>
 </div>
 
-<section>
+<app-loader *ngIf="!loader"></app-loader>
+
+<section *ngIf="loader" class="animate__animated animate__fadeIn">
     <h2>Lista de cambios</h2>
     
     <div *ngIf="filteredNovedades.length > 0" class="divCard">

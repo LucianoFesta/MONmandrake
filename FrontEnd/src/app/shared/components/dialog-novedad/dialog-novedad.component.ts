@@ -27,9 +27,10 @@ export class DialogNovedadComponent {
   }
 
   eliminarNovedad(id:string){
-    this.dbService.deleteNovedad(id).subscribe();
+    this.dbService.deleteNovedad(id).subscribe(() => {
+      this.dialog.closeAll();
+    });
     
-    this.dialog.closeAll();
   }
 
 }

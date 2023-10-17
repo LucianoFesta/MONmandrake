@@ -11,6 +11,8 @@ import { DialogNovedadComponent } from 'src/app/shared/components/dialog-novedad
 })
 export class CambiosComponent implements OnInit {
 
+  public loader:boolean = false;
+
   public listNovedades:Novedad[] = [];
 
   public filteredNovedades:Novedad[] = [];
@@ -32,6 +34,14 @@ export class CambiosComponent implements OnInit {
   
   
   ngOnInit(): void {
+    this.getNovedades();
+
+    setTimeout(() => {
+      this.loader = !this.loader;
+    },1000)
+  }
+
+  getNovedades(){
     this.dbService.getNovedades().subscribe( novedades => {
       this.listNovedades = novedades.sort((a,b) => {
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -39,13 +49,16 @@ export class CambiosComponent implements OnInit {
 
       this.filteredNovedades = [...this.listNovedades];
     })
-    
   }
 
   openDialog(item:Novedad){
-    this.dialog.open(DialogNovedadComponent,{
+    const dialog = this.dialog.open(DialogNovedadComponent,{
       data: item
     });
+
+    dialog.afterClosed().subscribe(() => {
+      this.getNovedades();
+    })
 
   }
 
