@@ -1,4 +1,10 @@
 <div class="botonera">
+  <div>
+    <a routerLink="/home">
+      <img class="logo" src="assets/images/descarga.svg" alt="Logo Sancor">
+    </a>
+  </div>
+  <div class="navBar">
     <mat-button-toggle-group aria-label="Font Style">
       <mat-button-toggle *ngFor="let item of itemsMenu" 
         [routerLink]="item.url" 
@@ -11,6 +17,7 @@
     <button mat-fab color="link">
       <img src="assets/images/descarga.svg" alt="Foto perfil">
     </button>
+  </div>
 </div>
 
 <mat-divider></mat-divider>
