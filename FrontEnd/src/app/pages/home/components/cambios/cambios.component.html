@@ -1,16 +1,42 @@
+<!-- <pre>
+    {{ listNovedades | json }}
+</pre> -->
+
 <div class="buscador animate__animated animate__fadeIn">
     <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
         <mat-label>¿Qué deseas buscar? </mat-label>
-        <input matInput #searchTag (input)="searchNovedades()">
+        <input matInput #searchTag (input)="searchNovedades()" [disabled]="searchTags">
     </mat-form-field>
+
+    <mat-chip-option matTooltip="Buscá por muchas etiquetas." (click)="openTags()" class="btnTags"><span class="material-symbols-outlined">style</span></mat-chip-option>
+    
+    <form *ngIf="searchTags">
+        <mat-form-field class="example-chip-list">
+          <mat-label>Buscar por Etiquetas</mat-label>
+          <mat-chip-grid #chipGrid>
+            <mat-chip-row *ngFor="let tag of tags" (removed)="remove(tag)">
+              {{ tag }}
+              <button class="delete" matChipRemove [attr.aria-label]="'remove ' + tag"> 
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          </mat-chip-grid>
+          <input placeholder="Nueva etiqueta..." #tagInput [formControl]="tagCtrl"
+            [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)"/>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+              {{ tag }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+   
 </div>
 
 <app-loader *ngIf="!loader"></app-loader>
-
-<!-- <pre>
-    {{ listNovedades | json }}
-</pre> -->
 
 <section *ngIf="loader" class="animate__animated animate__fadeIn">
     <h2>Lista de cambios</h2>
@@ -41,7 +67,7 @@
     </div>
     
     <div *ngIf="isEmpty(filteredNovedades)" class="listEmpty">
-        <p>No hay novedades con: " <b>{{searchTag.value}}</b> "</p> 
+        <p>No hay novedades con la búsqueda seleccionada.</p> 
     </div>
 </section>
 

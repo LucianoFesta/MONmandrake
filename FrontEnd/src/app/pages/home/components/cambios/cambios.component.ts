@@ -1,8 +1,14 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { FormControl } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable, map, startWith } from 'rxjs';
 import { Novedad } from 'src/app/interfaces/novedad';
 import { DbService } from 'src/app/services/db-service.service';
 import { DialogNovedadComponent } from 'src/app/shared/components/dialog-novedad/dialog-novedad.component';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-cambios',
@@ -12,6 +18,8 @@ import { DialogNovedadComponent } from 'src/app/shared/components/dialog-novedad
 export class CambiosComponent implements OnInit {
 
   public loader:boolean = false;
+
+  public searchTags:boolean = false;
 
   public page: number = 1;
 
@@ -32,11 +40,31 @@ export class CambiosComponent implements OnInit {
     "Openshift": '#f4be50',
     "Servidor": '#a4be40',
   };
+
+  public separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  public tagCtrl = new FormControl('');
+
+  public filteredTags!: Observable<string[]>;
+
+  public tags: string[] = [];
+
+  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Pepito', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
+  
+  public announcer = inject(LiveAnnouncer);
+  
+  @ViewChild('tagInput')
+  tagInput!: ElementRef<HTMLInputElement>;
   
   constructor( 
     private dbService: DbService,
     public dialog: MatDialog
-  ) {}
+  ) {
+    this.filteredTags = this.tagCtrl.valueChanges.pipe(
+      startWith(null),
+      map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
+    );
+  }
 
   @ViewChild('searchTag')
   public searchInput!: ElementRef<HTMLInputElement>;
@@ -111,8 +139,67 @@ export class CambiosComponent implements OnInit {
       });
     }
   }
+
+  _searchByTags(tags: string[]) {
+    this.filteredNovedades = {};
   
+    for (let mes in this.listNovedades) {
+      let filteredNovedades = this.listNovedades[mes].filter(novedad => {
+        return tags.every(item => novedad.etiquetas.some(tag => tag.toLowerCase().includes(item.toLowerCase())));
+      });
   
+      if (filteredNovedades.length > 0) {
+        this.filteredNovedades[mes] = filteredNovedades;
+      }
+    }
+  
+    this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
+      const fechaA = new Date(a.split('-')[1]);
+      const fechaB = new Date(b.split('-')[1]);
+      return fechaB.getTime() - fechaA.getTime();
+    });
+  }
+  
+  openTags(){
+    this.searchTags = !this.searchTags;
+  }
+  
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      this.tags.push(value);
+    }
+    event.chipInput!.clear();
+    this.tagCtrl.setValue(null);
+
+  }
+
+  remove(tag: string): void {
+    const index = this.tags.indexOf(tag);
+
+    if (index >= 0) {
+      this.tags.splice(index, 1);
+      this.announcer.announce(`Removed ${tag}`);
+      this._searchByTags(this.tags);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.tags.push(event.option.viewValue);
+    this._searchByTags(this.tags);
+    this.tagInput.nativeElement.value = '';
+    this.tagCtrl.setValue(null);
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.allTags.filter(tag => tag.toLowerCase().includes(filterValue));
+  }
   
   
 }
+
+

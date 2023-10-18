@@ -1,14 +1,44 @@
 mat-form-field{
-    width: 50vw;
+    width: 30vw;
     margin-top: 30px;
     margin-left: 20px;
 }
 
 .buscador{
+    display: flex;
+    align-items: center;
     background: linear-gradient(45deg, var(--azul-global), var(--azul-claro));
     border-radius: 3px;
     margin-bottom: 50px;
     box-shadow: 0 0 10px 10px var(--azul-claro);
+}
+
+.btnTags{
+    margin-top: 11px;
+    margin-left: 10px;
+    transition: 0.3s all ease-in-out;
+}
+
+.btnTags span{
+    font-size: 25px;
+    color: var(--azul-global);
+    transition: 0.3s all ease-in-out;
+}
+
+.delete{
+    cursor: pointer;
+}
+
+.btnTags:hover span{
+    color: aliceblue;
+}
+
+.btnTags:hover{
+    background-color: var(--azul-global);
+}
+
+form{
+    width: 90vw;
 }
 
 .etiquetas{
