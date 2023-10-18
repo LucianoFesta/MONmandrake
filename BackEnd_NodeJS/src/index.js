@@ -7,7 +7,9 @@ const novedadesRoutes = require('./routes/novedades.routes')
 
 const app = express();
 //routes
+app.use(express.json());
 app.use(novedadesRoutes);
+
 
 //mongodb conection
 
