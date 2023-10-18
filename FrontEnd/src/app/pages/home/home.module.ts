@@ -6,6 +6,7 @@ import { CambiosComponent } from './components/cambios/cambios.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AbmCambiosComponent } from './components/abm-cambios/abm-cambios.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         MaterialModule,
         ReactiveFormsModule,
         HomeRoutingModule,
-        SharedModule
+        SharedModule,
+        NgxPaginationModule
     ],
     exports: [
     ]

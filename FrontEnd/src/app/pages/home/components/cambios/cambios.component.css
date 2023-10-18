@@ -114,3 +114,27 @@ h2{
     border-radius: 10px;
     padding: 5px 15px;
 }
+
+pagination-controls{
+    display: flex;
+    justify-content: end;
+}
+
+
+
+.my-pagination /deep/ .ngx-pagination .current {
+    background: var(--azul-global);
+    border-radius: 50%;
+}
+
+.my-pagination /deep/ .ngx-pagination a {
+    color: var(--azul-global);
+    transition: 0.2s all;
+}
+
+.my-pagination /deep/ .ngx-pagination a:hover {
+    background-color: var(--azul-claro);
+    color: black;
+    border-radius: 10%;
+}
+

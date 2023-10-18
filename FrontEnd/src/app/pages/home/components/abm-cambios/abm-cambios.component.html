@@ -17,13 +17,13 @@
         </div>
 
         <mat-form-field>
-            <mat-label>Proyectos: </mat-label>
+            <mat-label>Etiquetas: </mat-label>
             <mat-select formControlName="etiquetas" multiple>
               <mat-option *ngFor="let etiqueta of etiquetas" [value]="etiqueta">
                 {{ etiqueta | titlecase }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="isValidField('etiquetas')">* Seleccioná proyectos afectados.</mat-error>
+            <mat-error *ngIf="isValidField('etiquetas')">* Seleccioná etiquetas correspondientes.</mat-error>
           </mat-form-field>
         <mat-form-field>
             <mat-label>Descripción: </mat-label>

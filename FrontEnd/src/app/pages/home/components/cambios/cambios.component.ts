@@ -13,6 +13,8 @@ export class CambiosComponent implements OnInit {
 
   public loader:boolean = false;
 
+  public page: number = 1;
+
   public listNovedades: { [mes: string]: Novedad[] } = {};
 
   public filteredNovedades: { [mes: string]: Novedad[] } = {};
