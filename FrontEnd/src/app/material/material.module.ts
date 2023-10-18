@@ -8,6 +8,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatChipsModule}  from '@angular/material/chips';
+import {MatTooltip, MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [],
@@ -21,7 +24,10 @@ import {MatSelectModule} from '@angular/material/select';
     MatCardModule,
     MatDividerModule,
     MatDialogModule,
-    MatSelectModule
+    MatSelectModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatTooltipModule
   ]
 
 })
