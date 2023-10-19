@@ -125,19 +125,22 @@ export class CambiosComponent implements OnInit {
 
       for (let mes in this.listNovedades) {
         let filteredNovedades = this.listNovedades[mes].filter(novedad => {
-          return novedad.etiquetas.some(tag => tag.toLowerCase().includes(newTag));
+          return novedad.descripcion.toLowerCase().includes(newTag);
         });
         if (filteredNovedades.length > 0) {
           this.filteredNovedades[mes] = filteredNovedades;
         }
       }
 
-      this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
-        const fechaA = new Date(a.split('-')[1]);
-        const fechaB = new Date(b.split('-')[1]);
-        return fechaB.getTime() - fechaA.getTime();
-      });
+    }else{
+      this.filteredNovedades = this.listNovedades;
     }
+
+    this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
+      const fechaA = new Date(a.split('-')[1]);
+      const fechaB = new Date(b.split('-')[1]);
+      return fechaB.getTime() - fechaA.getTime();
+    });
   }
 
   _searchByTags(tags: string[]) {
