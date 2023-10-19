@@ -9,7 +9,7 @@
         <input matInput #searchTag (input)="searchNovedades()" [disabled]="searchTags">
     </mat-form-field>
 
-    <mat-chip-option matTooltip="Buscá por muchas etiquetas." (click)="openTags()" class="btnTags"><span class="material-symbols-outlined">style</span></mat-chip-option>
+    <mat-chip-option matTooltip="Buscá por etiquetas." (click)="openTags()" class="btnTags"><span class="material-symbols-outlined">style</span></mat-chip-option>
     
     <form *ngIf="searchTags">
         <mat-form-field class="example-chip-list">
