@@ -14,6 +14,10 @@ export class DbService {
     return this.http.get<Novedad[]>('http://localhost:8000/novedades/listado');
   }
 
+  getNovedadesByTags(newTag:string):Observable<Novedad[]>{
+    return this.http.get<Novedad[]>('http://localhost:8000/novedades/listaByTags', {params: { tag:newTag }});
+  }
+
   createNovedad(novedad:Novedad){
     return this.http.post('http://localhost:8000/novedades/crearNovedad',novedad);
   }

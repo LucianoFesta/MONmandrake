@@ -119,19 +119,26 @@ export class CambiosComponent implements OnInit {
 
   searchNovedades() {
     const newTag = this.searchInput.nativeElement.value.toLowerCase();
-  
-    if (newTag) {
-      this.filteredNovedades = {};
 
-      for (let mes in this.listNovedades) {
-        let filteredNovedades = this.listNovedades[mes].filter(novedad => {
-          return novedad.descripcion.toLowerCase().includes(newTag);
-        });
-        if (filteredNovedades.length > 0) {
-          this.filteredNovedades[mes] = filteredNovedades;
-        }
-      }
-
+    if(newTag){
+      
+      this.dbService.getNovedadesByTags(newTag).subscribe( data => {
+        this.filteredNovedades = {};
+        
+        data.forEach((novedad:Novedad) => {
+          
+          const fecha = new Date(novedad.created_at);
+          const mes = fecha.toLocaleString('es-ES',{month:'long'});
+          const anio = fecha.getFullYear();
+          const key = `${mes}-${anio}`;
+          
+          if(!this.filteredNovedades[key]){
+            this.filteredNovedades[key] = [];
+          }
+          this.filteredNovedades[key].push(novedad);
+        })
+      })
+      
     }else{
       this.filteredNovedades = this.listNovedades;
     }
@@ -141,6 +148,7 @@ export class CambiosComponent implements OnInit {
       const fechaB = new Date(b.split('-')[1]);
       return fechaB.getTime() - fechaA.getTime();
     });
+    
   }
 
   _searchByTags(tags: string[]) {

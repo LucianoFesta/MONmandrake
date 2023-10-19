@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query
+from fastapi.encoders import jsonable_encoder
 from database.models.novedad import Novedad
 from database.connectDB import db_client
 from database.schemas.novedad import novedadSchema, novedadesSchema
@@ -13,6 +14,25 @@ router = APIRouter(prefix="/novedades",
 @router.get("/listado", response_model=List[Novedad], status_code=status.HTTP_200_OK)
 async def findAll():
     return novedadesSchema(db_client.novedads.find())
+
+
+@router.get("/listaByTags")
+async def getListFilteredByTags(tag:str = Query(..., description='Palabra clave')):
+    if not tag:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existe palabra clave a buscar.')
+    
+    listFiltered = db_client.novedads.find({"descripcion":{'$regex':tag, '$options':'i'}}) #Busca el tag en descripcion y option i es que no tenga en cuenta mayus y minus.
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)#Toma created_at del elemento como parámetro de ordenamiento.
+    
+    # Define un diccionario custom_encoder para manejar objetos ObjectId
+    custom_encoder = {
+        ObjectId: lambda objectId: str(objectId)  # Convierte ObjectId a cadenas
+    }
+
+    # Utiliza jsonable_encoder con el diccionario custom_encoder
+    result = jsonable_encoder(list(listFiltered), custom_encoder=custom_encoder)
+    
+    return result
 
 
 @router.get("/buscarNovedad/{id}", response_model=Novedad, status_code=status.HTTP_200_OK)
