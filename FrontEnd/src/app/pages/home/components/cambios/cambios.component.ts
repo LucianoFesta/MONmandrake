@@ -117,15 +117,15 @@ export class CambiosComponent implements OnInit {
     });
   }
 
-  searchNovedades() {
-    const newTag = this.searchInput.nativeElement.value.toLowerCase();
+  searchNovedadesByKeyword() {
+    const newKeyword = this.searchInput.nativeElement.value.toLowerCase();
 
-    if(newTag){
+    if(newKeyword){
       
-      this.dbService.getNovedadesByTags(newTag).subscribe( data => {
+      this.dbService.getNovedadesByKeyword(newKeyword).subscribe( (novedades:Novedad[]) => {
         this.filteredNovedades = {};
         
-        data.forEach((novedad:Novedad) => {
+        novedades.forEach((novedad:Novedad) => {
           
           const fecha = new Date(novedad.created_at);
           const mes = fecha.toLocaleString('es-ES',{month:'long'});

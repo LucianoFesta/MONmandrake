@@ -16,12 +16,12 @@ async def findAll():
     return novedadesSchema(db_client.novedads.find())
 
 
-@router.get("/listaByTags")
-async def getListFilteredByTags(tag:str = Query(..., description='Palabra clave')):
-    if not tag:
+@router.get("/listaByKeyword")
+async def getListFilteredByTags(keyword:str = Query(..., description='Palabra clave')):
+    if not keyword:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existe palabra clave a buscar.')
     
-    listFiltered = db_client.novedads.find({"descripcion":{'$regex':tag, '$options':'i'}}) #Busca el tag en descripcion y option i es que no tenga en cuenta mayus y minus.
+    listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'}}) #Busca el tag en descripcion y option i es que no tenga en cuenta mayus y minus.
     listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)#Toma created_at del elemento como parámetro de ordenamiento.
     
     # Define un diccionario custom_encoder para manejar objetos ObjectId

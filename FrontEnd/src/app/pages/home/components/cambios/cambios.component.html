@@ -6,7 +6,7 @@
     <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
         <mat-label>¿Qué deseas buscar? </mat-label>
-        <input matInput #searchTag (input)="searchNovedades()" [disabled]="searchTags">
+        <input matInput #searchTag (input)="searchNovedadesByKeyword()" [disabled]="searchTags">
     </mat-form-field>
 
     <mat-chip-option matTooltip="Buscá por etiquetas." (click)="openTags()" class="btnTags"><span class="material-symbols-outlined">style</span></mat-chip-option>
