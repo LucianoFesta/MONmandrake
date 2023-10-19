@@ -12,7 +12,7 @@ router = APIRouter(prefix="/novedades",
 
 @router.get("/listado", response_model=List[Novedad], status_code=status.HTTP_200_OK)
 async def findAll():
-    return novedadesSchema(db_client.local.novedades.find())
+    return novedadesSchema(db_client.novedads.find())
 
 
 @router.get("/buscarNovedad/{id}", response_model=Novedad, status_code=status.HTTP_200_OK)
@@ -29,11 +29,11 @@ async def createNovedad(novedad:Novedad):
     del novedad_dict["id"]
     
     #Obtenermos el id una vez que ya lo inserta en la db.
-    id = db_client.local.novedades.insert_one(novedad_dict).inserted_id
+    id = db_client.novedads.insert_one(novedad_dict).inserted_id
     
     #Buscamos ese usuario almacenado mediante el id creado por mongo (devuelve json).
     #Lo transformamos en Novedad para devolverlo -> schema.
-    newNovedad = novedadSchema(db_client.local.novedades.find_one({"_id":id}))
+    newNovedad = novedadSchema(db_client.novedads.find_one({"_id":id}))
     
     return Novedad(**newNovedad)
 
@@ -41,7 +41,7 @@ async def createNovedad(novedad:Novedad):
 @router.delete("/eliminarNovedad/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def deleteNovedad(id:str):
     
-    novedadExist = db_client.local.novedades.find_one_and_delete({"_id":ObjectId(id)})
+    novedadExist = db_client.novedads.find_one_and_delete({"_id":ObjectId(id)})
     
     if not novedadExist:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
@@ -57,7 +57,7 @@ async def editNovedad(novedad:Novedad, id:str):
     del novedad_dict["id"];
     
     try:
-        db_client.local.novedades.find_one_and_replace({"_id":ObjectId(id)},novedad_dict)
+        db_client.novedads.find_one_and_replace({"_id":ObjectId(id)},novedad_dict)
     except:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
                             detail= 'No se encontró la novedad a editar.')
@@ -67,7 +67,7 @@ async def editNovedad(novedad:Novedad, id:str):
 
 def buscarNovedad(campo:str, key):
     try:
-        novedad = db_client.local.novedades.find_one({campo:key})
+        novedad = db_client.novedads.find_one({campo:key})
         return Novedad(**novedadSchema(novedad))
     except:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
