@@ -81,10 +81,6 @@ export class CambiosComponent implements OnInit {
   getNovedades(){
     this.dbService.getNovedades().subscribe( novedades => {
   
-      novedades.sort((a,b) =>{
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      })
-  
       novedades.forEach((novedad:Novedad) => {
         const fecha = new Date(novedad.created_at);
         const mes = fecha.toLocaleString('es-ES',{month:'long'});

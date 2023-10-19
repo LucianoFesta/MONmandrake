@@ -13,7 +13,12 @@ router = APIRouter(prefix="/novedades",
 
 @router.get("/listado", response_model=List[Novedad], status_code=status.HTTP_200_OK)
 async def findAll():
-    return novedadesSchema(db_client.novedads.find())
+    
+    list = db_client.novedads.find()
+    
+    listSort = sorted(list, key=lambda novedad:novedad['created_at'], reverse=True)
+    
+    return listSort
 
 
 @router.get("/listByKeyword")
