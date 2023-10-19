@@ -151,19 +151,36 @@ export class CambiosComponent implements OnInit {
     
   }
 
-  _searchByTags(tags: string[]) {
-    this.filteredNovedades = {};
-  
-    for (let mes in this.listNovedades) {
-      let filteredNovedades = this.listNovedades[mes].filter(novedad => {
-        return tags.every(item => novedad.etiquetas.some(tag => tag.toLowerCase().includes(item.toLowerCase())));
+  searchByTags(tags: string[]) {
+
+    if(tags.length > 0){
+      this.dbService.getNovedadesByTags(tags).subscribe( (novedades:Novedad[]) => {
+        this.filteredNovedades = {};
+
+        novedades.forEach((novedad:Novedad) => {
+          const fecha = new Date(novedad.created_at);
+          const mes = fecha.toLocaleString('es-ES',{month:'long'});
+          const anio = fecha.getFullYear();
+          const key = `${mes}-${anio}`;
+
+          if(!this.filteredNovedades[key]){
+            this.filteredNovedades[key] = [];
+          }
+          this.filteredNovedades[key].push(novedad);
+
+          this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
+            const fechaA = new Date(a.split('-')[1]);
+            const fechaB = new Date(b.split('-')[1]);
+            return fechaB.getTime() - fechaA.getTime();
+          });
+
+        })
       });
-  
-      if (filteredNovedades.length > 0) {
-        this.filteredNovedades[mes] = filteredNovedades;
-      }
+
+    }else{
+      this.filteredNovedades = this.listNovedades;
     }
-  
+    
     this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
       const fechaA = new Date(a.split('-')[1]);
       const fechaB = new Date(b.split('-')[1]);
@@ -171,11 +188,11 @@ export class CambiosComponent implements OnInit {
     });
   }
   
+
   openTags(){
     this.searchTags = !this.searchTags;
   }
   
-
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
@@ -193,13 +210,13 @@ export class CambiosComponent implements OnInit {
     if (index >= 0) {
       this.tags.splice(index, 1);
       this.announcer.announce(`Removed ${tag}`);
-      this._searchByTags(this.tags);
+      this.searchByTags(this.tags);
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.tags.push(event.option.viewValue);
-    this._searchByTags(this.tags);
+    this.searchByTags(this.tags);
     this.tagInput.nativeElement.value = '';
     this.tagCtrl.setValue(null);
   }
@@ -209,7 +226,6 @@ export class CambiosComponent implements OnInit {
 
     return this.allTags.filter(tag => tag.toLowerCase().includes(filterValue));
   }
-  
   
 }
 

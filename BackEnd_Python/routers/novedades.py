@@ -16,8 +16,8 @@ async def findAll():
     return novedadesSchema(db_client.novedads.find())
 
 
-@router.get("/listaByKeyword")
-async def getListFilteredByTags(keyword:str = Query(..., description='Palabra clave')):
+@router.get("/listByKeyword")
+async def getListFilteredByKeyword(keyword:str = Query(..., description='Palabra clave')):
     if not keyword:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existe palabra clave a buscar.')
     
@@ -34,6 +34,23 @@ async def getListFilteredByTags(keyword:str = Query(..., description='Palabra cl
     
     return result
 
+
+@router.get("/listByTags")
+async def getListFilteredByTags(tags:List[str] = Query(..., description='Lista de Tags')):
+    if not tags:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags a buscar.')
+    
+    listFiltered = db_client.novedads.find({'etiquetas':{'$all':tags}}) #All hace que devuelva los que tienen todos los tags.
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
+    
+    custom_encoder = {
+        ObjectId: lambda objectId: str(objectId)
+    }
+
+    result = jsonable_encoder(list(listFiltered), custom_encoder=custom_encoder)
+
+    return result
+    
 
 @router.get("/buscarNovedad/{id}", response_model=Novedad, status_code=status.HTTP_200_OK)
 async def findById(id:str):

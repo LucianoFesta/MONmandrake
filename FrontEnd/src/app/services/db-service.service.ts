@@ -15,7 +15,11 @@ export class DbService {
   }
 
   getNovedadesByKeyword(newKeyword:string):Observable<Novedad[]>{
-    return this.http.get<Novedad[]>('http://localhost:8000/novedades/listaByKeyword', {params: { keyword:newKeyword }});
+    return this.http.get<Novedad[]>('http://localhost:8000/novedades/listByKeyword', {params: { keyword:newKeyword }});
+  }
+  
+  getNovedadesByTags(tags:string[]):Observable<Novedad[]>{
+    return this.http.get<Novedad[]>('http://localhost:8000/novedades/listByTags', {params: { tags:tags }});
   }
 
   createNovedad(novedad:Novedad){
