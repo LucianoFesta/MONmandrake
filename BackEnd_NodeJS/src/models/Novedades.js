@@ -5,8 +5,8 @@ const novedadSchema = new mongoose.Schema(
   {
     autor: String,
     responsable: String,
-    createdAt: String,
-    updatedAt: String,
+    created_at: String,
+    updated_at: String,
     descripcion: String,
     etiquetas: Array,
     estado: Number,

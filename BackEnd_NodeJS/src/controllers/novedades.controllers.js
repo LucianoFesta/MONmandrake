@@ -7,7 +7,7 @@ const novedadController = {
       res.send(list);
     } catch (error) {
       const mensajeError = "No se ha podido listar las novedades.";
-      res.status(500).json({ error: mensajeError });
+      res.status(400).json({ error: mensajeError });
     }
   },
   async crearNovedad(req, res) {
