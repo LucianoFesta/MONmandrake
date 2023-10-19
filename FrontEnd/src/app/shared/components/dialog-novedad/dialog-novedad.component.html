@@ -2,9 +2,9 @@
   <h2 mat-dialog-title>{{ data.autor }} cargó el siguiente cambio:</h2>
   <ul>
     <li>
-      <span><b>Cambio: </b>{{ data.descripcion | date:'dd-MM-yyyy HH:mm' }}</span>
+      <span><b>Cambio: </b>{{ data.descripcion }}</span>
     <li>
-      <span><b>Fecha de carga:</b> {{ data.created_at | date:'dd-MM-yyyy HH:mm' }}</span>
+      <span><b>Fecha de carga:</b> {{ data.created_at | date:'dd-MM-yyyy HH:mm' }} hs.</span>
     </li>
     <li>
       <span *ngIf="data.estado == 1">
