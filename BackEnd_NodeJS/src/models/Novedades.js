@@ -5,12 +5,13 @@ const novedadSchema = new mongoose.Schema(
   {
     autor: String,
     responsable: String,
+    createdAt: String,
+    updatedAt: String,
     descripcion: String,
-    estado: Number,
     etiquetas: Array,
+    estado: Number,
   },
   {
-    timestamps: true,
     versionKey: false,
   }
 );
