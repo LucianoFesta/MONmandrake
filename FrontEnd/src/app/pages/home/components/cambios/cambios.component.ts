@@ -133,6 +133,12 @@ export class CambiosComponent implements OnInit {
           }
           this.filteredNovedades[key].push(novedad);
         })
+
+        this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
+          const fechaA = new Date(a.split('-')[1]);
+          const fechaB = new Date(b.split('-')[1]);
+          return fechaB.getTime() - fechaA.getTime();
+        });
       })
       
     }else{
