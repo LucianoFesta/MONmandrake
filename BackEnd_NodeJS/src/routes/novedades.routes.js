@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.get("/novedades/listado", novedadController.listarNovedades);
 router.post("/novedades/crearNovedad",novedadController.crearNovedad );
-router.get("/novedades/buscarNovedad/:id", );
-router.put("/novedades/editarNovedad/:id", );
-router.delete("/novedades/eliminarNovedad/:id", );
+router.get("/novedades/buscarNovedad/:id", novedadController.buscarNovedadById );
+router.put("/novedades/editarNovedad/:id", novedadController.editarNovedad );
+router.delete("/novedades/eliminarNovedad/:id", novedadController.eliminarNovedad );
 
 
 module.exports = router;
