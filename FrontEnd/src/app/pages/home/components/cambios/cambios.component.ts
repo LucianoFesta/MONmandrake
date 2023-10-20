@@ -117,7 +117,7 @@ export class CambiosComponent implements OnInit {
     const newKeyword = this.searchInput.nativeElement.value.toLowerCase();
     this.keyword = newKeyword;
 
-    if(newKeyword && this.tagSelected.length == 0){
+    if(this.keyword && this.tagSelected.length == 0){
       
       this.dbService.getNovedadesByKeyword(newKeyword).subscribe( (novedades:Novedad[]) => {
         this.filteredNovedades = {};
@@ -134,16 +134,17 @@ export class CambiosComponent implements OnInit {
           }
           this.filteredNovedades[key].push(novedad);
         });
-
         this.sorted = this.sortedList(this.filteredNovedades);
-      })
+
+      });
       
-    }else if(newKeyword && this.tagSelected){
+    }else if(this.keyword && this.tagSelected){
       this.searchByKeywordAndTags(this.tagSelected, newKeyword);
 
     }else{
       this.filteredNovedades = this.listNovedades;
       this.keyword = '';
+
     }
     this.sorted = this.sortedList(this.filteredNovedades);
   }
@@ -151,7 +152,7 @@ export class CambiosComponent implements OnInit {
   searchByTags(tags: string[]) {
     this.tagSelected = tags;
 
-    if(tags.length > 0 && !this.keyword){
+    if(this.tagSelected.length > 0 && !this.keyword){
       this.dbService.getNovedadesByTags(tags).subscribe( (novedades:Novedad[]) => {
         this.filteredNovedades = {};
 
@@ -165,19 +166,19 @@ export class CambiosComponent implements OnInit {
             this.filteredNovedades[key] = [];
           }
           this.filteredNovedades[key].push(novedad); 
-        });
 
+        });
         this.sorted = this.sortedList(this.filteredNovedades);
+
       });
 
-    }else if(tags.length > 0 && this.keyword){
-
+    }else if(this.tagSelected.length > 0 && this.keyword){
       this.searchByKeywordAndTags(tags, this.keyword);
 
     }else{
       this.filteredNovedades = this.listNovedades;
-
       this.tagSelected = [];
+
     };
     this.sorted = this.sortedList(this.filteredNovedades);
   }
