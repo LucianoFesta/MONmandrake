@@ -4,7 +4,7 @@
     <li>
       <span><b>Cambio: </b>{{ data.descripcion }}</span>
     <li>
-      <span><b>Fecha de carga:</b> {{ data.created_at }}</span>
+      <span><b>Fecha de carga:</b> {{ data.created_at | date:'dd-MM-yyyy HH:mm' }} hs.</span>
     </li>
     <li>
       <span *ngIf="data.estado == 1">
