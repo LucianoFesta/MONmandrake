@@ -21,7 +21,7 @@ async def findAll():
     return listSort
 
 
-@router.get("/listByKeyword")
+@router.get("/listByKeyword", response_model=List[Novedad], status_code=status.HTTP_200_OK)
 async def getListFilteredByKeyword(keyword:str = Query(..., description='Palabra clave')):
     if not keyword:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existe palabra clave a buscar.')
@@ -40,7 +40,7 @@ async def getListFilteredByKeyword(keyword:str = Query(..., description='Palabra
     return result
 
 
-@router.get("/listByTags")
+@router.get("/listByTags", response_model=List[Novedad], status_code=status.HTTP_200_OK)
 async def getListFilteredByTags(tags:List[str] = Query(..., description='Lista de Tags')):
     if not tags:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags a buscar.')
@@ -55,7 +55,24 @@ async def getListFilteredByTags(tags:List[str] = Query(..., description='Lista d
     result = jsonable_encoder(list(listFiltered), custom_encoder=custom_encoder)
 
     return result
+  
+
+@router.get("/listByKeywordAndTags", response_model=List[Novedad], status_code=status.HTTP_200_OK)
+async def getListFilteredByKeywordAndTags(keyword:str, tags:List[str] = Query(..., description='Palabra clave y tags')):
+    if not keyword and tags:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags y palabra clave a buscar.')
     
+    listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'},'etiquetas':{'$all':tags} })
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
+    
+    custom_encoder = {
+        ObjectId: lambda objectId: str(objectId)
+    }
+
+    result = jsonable_encoder(list(listFiltered), custom_encoder=custom_encoder)
+    
+    return result  
+
 
 @router.get("/buscarNovedad/{id}", response_model=Novedad, status_code=status.HTTP_200_OK)
 async def findById(id:str):

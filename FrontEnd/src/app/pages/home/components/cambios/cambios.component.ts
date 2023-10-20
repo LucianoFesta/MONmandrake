@@ -52,6 +52,10 @@ export class CambiosComponent implements OnInit {
   public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Pepito', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
   
   public announcer = inject(LiveAnnouncer);
+
+  public keyword:string = '';
+
+  public tagSelected:string[] = [];
   
   @ViewChild('tagInput')
   tagInput!: ElementRef<HTMLInputElement>;
@@ -95,11 +99,7 @@ export class CambiosComponent implements OnInit {
 
       this.filteredNovedades = this.listNovedades;
   
-      this.sorted = Object.keys(this.listNovedades).sort((a, b) => {
-        const fechaA = new Date(a.split('-')[1]);
-        const fechaB = new Date(b.split('-')[1]);
-        return fechaB.getTime() - fechaA.getTime();
-      });
+      this.sorted = this.sortedList(this.listNovedades);
     })
   }
   
@@ -115,8 +115,9 @@ export class CambiosComponent implements OnInit {
 
   searchNovedadesByKeyword() {
     const newKeyword = this.searchInput.nativeElement.value.toLowerCase();
+    this.keyword = newKeyword;
 
-    if(newKeyword){
+    if(newKeyword && this.tagSelected.length == 0){
       
       this.dbService.getNovedadesByKeyword(newKeyword).subscribe( (novedades:Novedad[]) => {
         this.filteredNovedades = {};
@@ -132,30 +133,25 @@ export class CambiosComponent implements OnInit {
             this.filteredNovedades[key] = [];
           }
           this.filteredNovedades[key].push(novedad);
-        })
-
-        this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
-          const fechaA = new Date(a.split('-')[1]);
-          const fechaB = new Date(b.split('-')[1]);
-          return fechaB.getTime() - fechaA.getTime();
         });
+
+        this.sorted = this.sortedList(this.filteredNovedades);
       })
       
+    }else if(newKeyword && this.tagSelected){
+      this.searchByKeywordAndTags(this.tagSelected, newKeyword);
+
     }else{
       this.filteredNovedades = this.listNovedades;
+      this.keyword = '';
     }
-
-    this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
-      const fechaA = new Date(a.split('-')[1]);
-      const fechaB = new Date(b.split('-')[1]);
-      return fechaB.getTime() - fechaA.getTime();
-    });
-    
+    this.sorted = this.sortedList(this.filteredNovedades);
   }
 
   searchByTags(tags: string[]) {
+    this.tagSelected = tags;
 
-    if(tags.length > 0){
+    if(tags.length > 0 && !this.keyword){
       this.dbService.getNovedadesByTags(tags).subscribe( (novedades:Novedad[]) => {
         this.filteredNovedades = {};
 
@@ -168,28 +164,55 @@ export class CambiosComponent implements OnInit {
           if(!this.filteredNovedades[key]){
             this.filteredNovedades[key] = [];
           }
-          this.filteredNovedades[key].push(novedad);
+          this.filteredNovedades[key].push(novedad); 
+        });
 
-          this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
-            const fechaA = new Date(a.split('-')[1]);
-            const fechaB = new Date(b.split('-')[1]);
-            return fechaB.getTime() - fechaA.getTime();
-          });
-
-        })
+        this.sorted = this.sortedList(this.filteredNovedades);
       });
+
+    }else if(tags.length > 0 && this.keyword){
+
+      this.searchByKeywordAndTags(tags, this.keyword);
 
     }else{
       this.filteredNovedades = this.listNovedades;
-    }
+
+      this.tagSelected = [];
+    };
+    this.sorted = this.sortedList(this.filteredNovedades);
+  }
+  
+  searchByKeywordAndTags(tags:string[], keyword:string){
     
-    this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
+    this.dbService.getNovedadesByKeywordAndTags(tags, keyword).subscribe((novedades:Novedad[]) => {
+      this.filteredNovedades = {};
+      
+      novedades.forEach((novedad:Novedad) => {
+        const fecha = new Date(novedad.created_at);
+        const mes = fecha.toLocaleString('es-ES',{month:'long'});
+        const anio = fecha.getFullYear();
+        const key = `${mes}-${anio}`;
+
+        if(!this.filteredNovedades[key]){
+          this.filteredNovedades[key] = [];
+        }
+        this.filteredNovedades[key].push(novedad);
+
+      });
+      this.sorted = this.sortedList(this.filteredNovedades);
+
+    });
+    this.sorted = this.sortedList(this.filteredNovedades);
+  }
+
+
+  private sortedList(novedades:{ [mes: string]: Novedad[] }):string[]{
+    return Object.keys(novedades).sort((a, b) => {
       const fechaA = new Date(a.split('-')[1]);
       const fechaB = new Date(b.split('-')[1]);
       return fechaB.getTime() - fechaA.getTime();
     });
   }
-  
 
   openTags(){
     this.searchTags = !this.searchTags;
