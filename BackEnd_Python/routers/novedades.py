@@ -18,7 +18,9 @@ async def findAll():
     
     listSort = sorted(list, key=lambda novedad:novedad['created_at'], reverse=True)
     
-    return listSort
+    result = [Novedad(**novedadSchema(item)) for item in listSort]
+    
+    return result
 
 
 @router.get("/listByKeyword", response_model=List[Novedad], status_code=status.HTTP_200_OK)
@@ -29,13 +31,8 @@ async def getListFilteredByKeyword(keyword:str = Query(..., description='Palabra
     listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'}}) #Busca el tag en descripcion y option i es que no tenga en cuenta mayus y minus.
     listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)#Toma created_at del elemento como parámetro de ordenamiento.
     
-    # Define un diccionario custom_encoder para manejar objetos ObjectId
-    custom_encoder = {
-        ObjectId: lambda objectId: str(objectId)  # Convierte ObjectId a cadenas
-    }
-
-    # Utiliza jsonable_encoder con el diccionario custom_encoder
-    result = jsonable_encoder(list(listFiltered), custom_encoder=custom_encoder)
+    #Recorre el listado y convierte una instancia de Novedad en base a los datos del novedadSchema (usa el _id como id).
+    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
     
     return result
 
@@ -48,11 +45,7 @@ async def getListFilteredByTags(tags:List[str] = Query(..., description='Lista d
     listFiltered = db_client.novedads.find({'etiquetas':{'$all':tags}}) #All hace que devuelva los que tienen todos los tags.
     listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
     
-    custom_encoder = {
-        ObjectId: lambda objectId: str(objectId)
-    }
-
-    result = jsonable_encoder(list(listFiltered), custom_encoder=custom_encoder)
+    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
 
     return result
   
@@ -65,11 +58,7 @@ async def getListFilteredByKeywordAndTags(keyword:str, tags:List[str] = Query(..
     listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'},'etiquetas':{'$all':tags} })
     listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
     
-    custom_encoder = {
-        ObjectId: lambda objectId: str(objectId)
-    }
-
-    result = jsonable_encoder(list(listFiltered), custom_encoder=custom_encoder)
+    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
     
     return result  
 

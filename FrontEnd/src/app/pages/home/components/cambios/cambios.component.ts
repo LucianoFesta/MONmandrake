@@ -76,10 +76,6 @@ export class CambiosComponent implements OnInit {
   
   ngOnInit(): void {
     this.getNovedades();
-
-    setTimeout(() => {
-      this.loader = !this.loader;
-    },1000)
   }
 
   getNovedades(){
@@ -101,6 +97,10 @@ export class CambiosComponent implements OnInit {
   
       this.sorted = this.sortedList(this.listNovedades);
     })
+
+    setTimeout(() => {
+      this.loader = !this.loader;
+    },1000)
   }
   
   isEmpty(obj: object): boolean {
