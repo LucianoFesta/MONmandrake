@@ -52,6 +52,10 @@ export class CambiosComponent implements OnInit {
   public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Pepito', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
   
   public announcer = inject(LiveAnnouncer);
+
+  public keyword:string = '';
+
+  public tagSelected:string[] = [];
   
   @ViewChild('tagInput')
   tagInput!: ElementRef<HTMLInputElement>;
@@ -72,18 +76,10 @@ export class CambiosComponent implements OnInit {
   
   ngOnInit(): void {
     this.getNovedades();
-
-    setTimeout(() => {
-      this.loader = !this.loader;
-    },1000)
   }
 
   getNovedades(){
     this.dbService.getNovedades().subscribe( novedades => {
-  
-      novedades.sort((a,b) =>{
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      })
   
       novedades.forEach((novedad:Novedad) => {
         const fecha = new Date(novedad.created_at);
@@ -99,12 +95,12 @@ export class CambiosComponent implements OnInit {
 
       this.filteredNovedades = this.listNovedades;
   
-      this.sorted = Object.keys(this.listNovedades).sort((a, b) => {
-        const fechaA = new Date(a.split('-')[1]);
-        const fechaB = new Date(b.split('-')[1]);
-        return fechaB.getTime() - fechaA.getTime();
-      });
+      this.sorted = this.sortedList(this.listNovedades);
     })
+
+    setTimeout(() => {
+      this.loader = !this.loader;
+    },1000)
   }
   
   isEmpty(obj: object): boolean {
@@ -117,57 +113,112 @@ export class CambiosComponent implements OnInit {
     });
   }
 
-  searchNovedades() {
-    const newTag = this.searchInput.nativeElement.value.toLowerCase();
-  
-    if (newTag) {
-      this.filteredNovedades = {};
+  searchNovedadesByKeyword() {
+    const newKeyword = this.searchInput.nativeElement.value.toLowerCase();
+    this.keyword = newKeyword;
 
-      for (let mes in this.listNovedades) {
-        let filteredNovedades = this.listNovedades[mes].filter(novedad => {
-          return novedad.descripcion.toLowerCase().includes(newTag);
+    if(this.keyword && this.tagSelected.length == 0){
+      
+      this.dbService.getNovedadesByKeyword(newKeyword).subscribe( (novedades:Novedad[]) => {
+        this.filteredNovedades = {};
+        
+        novedades.forEach((novedad:Novedad) => {
+          
+          const fecha = new Date(novedad.created_at);
+          const mes = fecha.toLocaleString('es-ES',{month:'long'});
+          const anio = fecha.getFullYear();
+          const key = `${mes}-${anio}`;
+          
+          if(!this.filteredNovedades[key]){
+            this.filteredNovedades[key] = [];
+          }
+          this.filteredNovedades[key].push(novedad);
         });
-        if (filteredNovedades.length > 0) {
-          this.filteredNovedades[mes] = filteredNovedades;
-        }
-      }
+        this.sorted = this.sortedList(this.filteredNovedades);
+
+      });
+      
+    }else if(this.keyword && this.tagSelected){
+      this.searchByKeywordAndTags(this.tagSelected, newKeyword);
 
     }else{
       this.filteredNovedades = this.listNovedades;
-    }
+      this.keyword = '';
 
-    this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
-      const fechaA = new Date(a.split('-')[1]);
-      const fechaB = new Date(b.split('-')[1]);
-      return fechaB.getTime() - fechaA.getTime();
-    });
+    }
+    this.sorted = this.sortedList(this.filteredNovedades);
   }
 
-  _searchByTags(tags: string[]) {
-    this.filteredNovedades = {};
-  
-    for (let mes in this.listNovedades) {
-      let filteredNovedades = this.listNovedades[mes].filter(novedad => {
-        return tags.every(item => novedad.etiquetas.some(tag => tag.toLowerCase().includes(item.toLowerCase())));
+  searchByTags(tags: string[]) {
+    this.tagSelected = tags;
+
+    if(this.tagSelected.length > 0 && !this.keyword){
+      this.dbService.getNovedadesByTags(tags).subscribe( (novedades:Novedad[]) => {
+        this.filteredNovedades = {};
+
+        novedades.forEach((novedad:Novedad) => {
+          const fecha = new Date(novedad.created_at);
+          const mes = fecha.toLocaleString('es-ES',{month:'long'});
+          const anio = fecha.getFullYear();
+          const key = `${mes}-${anio}`;
+
+          if(!this.filteredNovedades[key]){
+            this.filteredNovedades[key] = [];
+          }
+          this.filteredNovedades[key].push(novedad); 
+
+        });
+        this.sorted = this.sortedList(this.filteredNovedades);
+
       });
+
+    }else if(this.tagSelected.length > 0 && this.keyword){
+      this.searchByKeywordAndTags(tags, this.keyword);
+
+    }else{
+      this.filteredNovedades = this.listNovedades;
+      this.tagSelected = [];
+
+    };
+    this.sorted = this.sortedList(this.filteredNovedades);
+  }
   
-      if (filteredNovedades.length > 0) {
-        this.filteredNovedades[mes] = filteredNovedades;
-      }
-    }
-  
-    this.sorted = Object.keys(this.filteredNovedades).sort((a, b) => {
+  searchByKeywordAndTags(tags:string[], keyword:string){
+    
+    this.dbService.getNovedadesByKeywordAndTags(tags, keyword).subscribe((novedades:Novedad[]) => {
+      this.filteredNovedades = {};
+      
+      novedades.forEach((novedad:Novedad) => {
+        const fecha = new Date(novedad.created_at);
+        const mes = fecha.toLocaleString('es-ES',{month:'long'});
+        const anio = fecha.getFullYear();
+        const key = `${mes}-${anio}`;
+
+        if(!this.filteredNovedades[key]){
+          this.filteredNovedades[key] = [];
+        }
+        this.filteredNovedades[key].push(novedad);
+
+      });
+      this.sorted = this.sortedList(this.filteredNovedades);
+
+    });
+    this.sorted = this.sortedList(this.filteredNovedades);
+  }
+
+
+  private sortedList(novedades:{ [mes: string]: Novedad[] }):string[]{
+    return Object.keys(novedades).sort((a, b) => {
       const fechaA = new Date(a.split('-')[1]);
       const fechaB = new Date(b.split('-')[1]);
       return fechaB.getTime() - fechaA.getTime();
     });
   }
-  
+
   openTags(){
     this.searchTags = !this.searchTags;
   }
   
-
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
@@ -185,13 +236,13 @@ export class CambiosComponent implements OnInit {
     if (index >= 0) {
       this.tags.splice(index, 1);
       this.announcer.announce(`Removed ${tag}`);
-      this._searchByTags(this.tags);
+      this.searchByTags(this.tags);
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.tags.push(event.option.viewValue);
-    this._searchByTags(this.tags);
+    this.searchByTags(this.tags);
     this.tagInput.nativeElement.value = '';
     this.tagCtrl.setValue(null);
   }
@@ -201,7 +252,6 @@ export class CambiosComponent implements OnInit {
 
     return this.allTags.filter(tag => tag.toLowerCase().includes(filterValue));
   }
-  
   
 }
 

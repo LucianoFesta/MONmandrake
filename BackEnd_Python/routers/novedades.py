@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query
+from fastapi.encoders import jsonable_encoder
 from database.models.novedad import Novedad
 from database.connectDB import db_client
 from database.schemas.novedad import novedadSchema, novedadesSchema
@@ -12,7 +13,54 @@ router = APIRouter(prefix="/novedades",
 
 @router.get("/listado", response_model=List[Novedad], status_code=status.HTTP_200_OK)
 async def findAll():
-    return novedadesSchema(db_client.novedads.find())
+    
+    list = db_client.novedads.find()
+    
+    listSort = sorted(list, key=lambda novedad:novedad['created_at'], reverse=True)
+    
+    result = [Novedad(**novedadSchema(item)) for item in listSort]
+    
+    return result
+
+
+@router.get("/listByKeyword", response_model=List[Novedad], status_code=status.HTTP_200_OK)
+async def getListFilteredByKeyword(keyword:str = Query(..., description='Palabra clave')):
+    if not keyword:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existe palabra clave a buscar.')
+    
+    listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'}}) #Busca el tag en descripcion y option i es que no tenga en cuenta mayus y minus.
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)#Toma created_at del elemento como parámetro de ordenamiento.
+    
+    #Recorre el listado y convierte una instancia de Novedad en base a los datos del novedadSchema (usa el _id como id).
+    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
+    
+    return result
+
+
+@router.get("/listByTags", response_model=List[Novedad], status_code=status.HTTP_200_OK)
+async def getListFilteredByTags(tags:List[str] = Query(..., description='Lista de Tags')):
+    if not tags:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags a buscar.')
+    
+    listFiltered = db_client.novedads.find({'etiquetas':{'$all':tags}}) #All hace que devuelva los que tienen todos los tags.
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
+    
+    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
+
+    return result
+  
+
+@router.get("/listByKeywordAndTags", response_model=List[Novedad], status_code=status.HTTP_200_OK)
+async def getListFilteredByKeywordAndTags(keyword:str, tags:List[str] = Query(..., description='Palabra clave y tags')):
+    if not keyword and tags:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags y palabra clave a buscar.')
+    
+    listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'},'etiquetas':{'$all':tags} })
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
+    
+    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
+    
+    return result  
 
 
 @router.get("/buscarNovedad/{id}", response_model=Novedad, status_code=status.HTTP_200_OK)

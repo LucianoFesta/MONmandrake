@@ -1,4 +1,5 @@
-const novedadModel = require("../models/Novedades"); // Importa el modelo Mongoose
+const novedadModel = require("../models/Novedades");
+const unorm = require('unorm');
 
 const novedadController = {
   async listarNovedades(req, res) {
@@ -49,6 +50,45 @@ const novedadController = {
       res.status(400).json({ error: mensajeError });
     }
   },
+  async buscarNovedadPorPalabra(req, res) {
+    const palabra = req.query.keyword;
+    const palabraNormalizada = unorm.nfc(palabra); //TODO: no funca.
+    try {
+        const resultados = await novedadModel.find({ descripcion: {
+          $regex: palabraNormalizada,
+          $options: 'i'
+      } });
+        res.json(resultados);
+    } catch (error) {
+        res.status(404).send('Error al buscar por palabra');
+    }
+  },
+  async buscarNovedadPorEtiqueta(req, res){
+    const etiqueta = req.query.tags;
+    try {
+        const resultados = await novedadModel.find({ etiquetas: { $regex: new RegExp(etiqueta, 'i') } });
+        res.json(resultados);
+    } catch (error) {
+        console.error('Error al buscar por etiqueta:', error);
+        res.status(404).send('Error al buscar por etiqueta');
+    }
+  },
+  async buscarNovedadPorEtiquetaYPalabra(req, res){
+    const palabra = req.query.keyword; 
+    const etiqueta = req.query.tags;
+    try {
+        const resultados = await novedadModel.find({
+            $and: [
+                { descripcion: { $regex: palabra, $options: 'i' } },
+                { etiquetas: { $regex: new RegExp(etiqueta, 'i') } }
+            ]
+        });
+        res.json(resultados);
+    } catch (error) {
+        console.error('Error al buscar por palabra y etiqueta:', error);
+        res.status(404).send('Error al buscar por palabra y etiqueta');
+    }
+  }
 };
 
 module.exports = novedadController;

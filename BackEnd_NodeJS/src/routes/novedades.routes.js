@@ -9,5 +9,11 @@ router.get("/novedades/buscarNovedad/:id", novedadController.buscarNovedadById )
 router.put("/novedades/editarNovedad/:id", novedadController.editarNovedad );
 router.delete("/novedades/eliminarNovedad/:id", novedadController.eliminarNovedad );
 
+//Busqueda:
+router.get("/novedades/listByKeyword", novedadController.buscarNovedadPorPalabra);
+router.get("/novedades/listByTags", novedadController.buscarNovedadPorEtiqueta);
+router.get("/novedades/listByKeywordAndTags", novedadController.buscarNovedadPorEtiquetaYPalabra);
+
+
 
 module.exports = router;

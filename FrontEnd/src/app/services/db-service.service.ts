@@ -14,6 +14,18 @@ export class DbService {
     return this.http.get<Novedad[]>('http://localhost:8000/novedades/listado');
   }
 
+  getNovedadesByKeyword(newKeyword:string):Observable<Novedad[]>{
+    return this.http.get<Novedad[]>('http://localhost:8000/novedades/listByKeyword', {params: { keyword:newKeyword }});
+  }
+  
+  getNovedadesByTags(tags:string[]):Observable<Novedad[]>{
+    return this.http.get<Novedad[]>('http://localhost:8000/novedades/listByTags', {params: { tags:tags }});
+  }
+
+  getNovedadesByKeywordAndTags(tags:string[], newKeyword:string):Observable<Novedad[]>{
+    return this.http.get<Novedad[]>('http://localhost:8000/novedades/listByKeywordAndTags', {params: { tags:tags, keyword:newKeyword }});
+  }
+
   createNovedad(novedad:Novedad){
     return this.http.post('http://localhost:8000/novedades/crearNovedad',novedad);
   }
