@@ -1,6 +1,6 @@
-<section class="animate__animated animate__fadeIn">
-    <h2 *ngIf="!edit">Registrar un Cambio</h2>
-    <h2 *ngIf="edit">Modificar un Cambio</h2>
+<div class="animate__animated animate__fadeIn">
+    <!-- <h2 *ngIf="!edit">Registrar un Cambio</h2>
+    <h2 *ngIf="edit">Modificar un Cambio</h2> -->
     
     <form [formGroup]="formCreate">
         <div class="divFlex">
@@ -9,29 +9,41 @@
                 <input matInput formControlName="autor">
                 <mat-error *ngIf="isValidField('autor')">* El autor es obligatorio.</mat-error>
             </mat-form-field>
-            <mat-form-field>
-                <mat-label>Responsable: </mat-label>
-                <input matInput formControlName="responsable">
-                <mat-error *ngIf="isValidField('responsable')">* El responsable es obligatorio.</mat-error>
+            
+            <mat-form-field class="textArea">
+                <mat-label>Descripción: </mat-label>
+                <textarea matInput formControlName="descripcion"></textarea>
+                <mat-error *ngIf="isValidField('descripcion')">* Descripción del cambio obligatoria.</mat-error>
             </mat-form-field>
+
+            <mat-form-field class="example-chip-list">
+                <mat-label>Seleccioná etiquetas</mat-label>
+                <mat-chip-grid #chipGrid formControlName="etiquetas">
+                <mat-chip-row *ngFor="let tag of tags" (removed)="remove(tag)">
+                    {{ tag }}
+                    <button class="delete" matChipRemove [attr.aria-label]="'remove ' + tag"> 
+                    <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+                </mat-chip-grid>
+                <input placeholder="Nueva etiqueta..." #tagInput [formControl]="tagCtrl"
+                [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="add($event)"/>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                    {{ tag }}
+                </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="isValidField('etiquetas')">* Seleccioná etiquetas correspondientes.</mat-error>
+            </mat-form-field>
+
+
+            <mat-icon *ngIf="!edit" class="btn" (click)="saveNovedad()" matTooltip="Agregar novedad.">add</mat-icon>
+            <button *ngIf="!edit" class="btnSmall" mat-raised-button (click)="saveNovedad()"><mat-icon>add</mat-icon> Agregar Novedad</button>
+            <!-- <button *ngIf="edit" class="btn" mat-raised-button (click)="editNovedad()"><mat-icon>edit</mat-icon> Editar Cambio</button> -->
         </div>
 
-        <mat-form-field>
-            <mat-label>Etiquetas: </mat-label>
-            <mat-select formControlName="etiquetas" multiple>
-              <mat-option *ngFor="let etiqueta of etiquetas" [value]="etiqueta">
-                {{ etiqueta | titlecase }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="isValidField('etiquetas')">* Seleccioná etiquetas correspondientes.</mat-error>
-          </mat-form-field>
-        <mat-form-field>
-            <mat-label>Descripción: </mat-label>
-            <textarea matInput formControlName="descripcion"></textarea>
-            <mat-error *ngIf="isValidField('descripcion')">* Descripción del cambio obligatoria.</mat-error>
-        </mat-form-field>
 
-        <button *ngIf="!edit" class="btn" mat-raised-button (click)="saveNovedad()"><mat-icon>save</mat-icon> Guardar Cambio</button>
-        <button *ngIf="edit" class="btn" mat-raised-button (click)="editNovedad()"><mat-icon>edit</mat-icon> Editar Cambio</button>
     </form>
-</section>
+</div>

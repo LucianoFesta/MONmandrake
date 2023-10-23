@@ -1,9 +1,13 @@
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { DbService } from 'src/app/services/db-service.service';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-abm-cambios',
@@ -18,7 +22,12 @@ export class AbmCambiosComponent implements OnInit{
     private dbService:DbService,
     private router:Router,
     private route:ActivatedRoute
-  ){}
+  ){
+    this.filteredTags = this.tagCtrl.valueChanges.pipe(
+      startWith(null),
+      map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
+    );
+  }
 
   ngOnInit(): void {
 
@@ -43,6 +52,18 @@ export class AbmCambiosComponent implements OnInit{
     
   }
 
+  public tagCtrl = new FormControl('');
+
+  public separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  public filteredTags!: Observable<string[]>;
+
+  public announcer = inject(LiveAnnouncer);
+
+  public tags: string[] = [];
+
+  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Pepito', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
+
   public edit = false;
   
   private idNovedad!:string;
@@ -53,7 +74,6 @@ export class AbmCambiosComponent implements OnInit{
 
   public formCreate:FormGroup = this.fb.group({
     autor: ['', [ Validators.required ]],
-    responsable: ['', [ Validators.required ]],
     etiquetas: ['', [Validators.required]],
     descripcion: ['', [ Validators.required ]],
     estado:[1],
@@ -71,14 +91,16 @@ export class AbmCambiosComponent implements OnInit{
 
     newNovedad.created_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
+    newNovedad.responsable = this.formCreate.get('autor')?.value;
     
+
     this.dbService.createNovedad(newNovedad).pipe(
       catchError((e) => {
         console.log(e)
         return of()
       })
     ).subscribe(() => {
-      this.router.navigateByUrl('home');
+      window.location.reload();
     })
 
   };
@@ -107,5 +129,37 @@ export class AbmCambiosComponent implements OnInit{
   isValidField(field:string):boolean | null{
     return this.formCreate.controls[field].errors && this.formCreate.controls[field].touched;
   };
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      this.tags.push(value);
+    }
+    event.chipInput!.clear();
+    this.tagCtrl.setValue(null);
+
+  }
+
+  remove(tag: string): void {
+    const index = this.tags.indexOf(tag);
+
+    if (index >= 0) {
+      this.tags.splice(index, 1);
+      this.announcer.announce(`Removed ${tag}`);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.tags.push(event.option.viewValue);
+    this.tagCtrl.setValue(null);
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.allTags.filter(tag => tag.toLowerCase().includes(filterValue));
+  }
+  
 
 }
