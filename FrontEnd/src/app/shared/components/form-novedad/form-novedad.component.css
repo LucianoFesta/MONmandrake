@@ -1,0 +1,91 @@
+.form{
+    width: 85vw;
+    margin: 30px auto 10px auto;
+    padding: 12px;
+    background-color: var(--azul-claro);
+    border-radius: 5px;
+}
+
+.formEdit{
+    padding: 12px;
+    margin: 0px 5px;
+    border-radius: 5px;
+    background-color: var(--azul-claro);
+}
+
+mat-form-field{
+    width: 25vw;
+}
+
+.matFormFieldEdit{
+    margin-right: 5px;
+}
+
+.divFlex{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.divFlexEdit{
+    display: flex;
+    align-items: center;
+}
+
+.btn{
+    cursor: pointer;
+    padding: 7px;
+    color: var(--verde-submit);
+    border-radius: 10%;
+    border: 2px solid var(--verde-submit);
+    background-color: white;
+    transition: 0.2s all ease-in-out;
+}
+
+.btn:hover{
+    color: white;
+    border: 2px solid white;
+    background-color: var(--verde-submit);
+}
+
+.btnSmall{
+    display: none;
+    margin-top: 20px;
+    width: 40vw;
+    padding: 10px;
+    color: white!important;
+    border: 2px solid ;
+    background-color: var(--verde-submit)!important;
+    border-radius: 10px;
+    margin-right: 8px;
+    transition: all .2s ease-in-out;
+    margin-bottom: 15px;
+}
+
+.btnSmall:hover{
+    color: var(--verde-submit)!important;
+    border: 2px solid ;
+    background-color: white!important;
+}
+
+@media (max-width: 769px){
+    .divFlex, .divFlexEdit{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    mat-form-field{
+        width: 80vw;
+    }
+
+    .btn{
+        display: none;
+    }
+
+    .btnSmall{
+        display: flex;
+        justify-content: center;
+    }
+}

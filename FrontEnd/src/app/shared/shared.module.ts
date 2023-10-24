@@ -3,18 +3,23 @@ import { NgModule } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 import { DialogNovedadComponent } from './components/dialog-novedad/dialog-novedad.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormNovedadComponent } from './components/form-novedad/form-novedad.component';
 
 @NgModule({
     declarations: [
         DialogNovedadComponent,
-        LoaderComponent
+        LoaderComponent,
+        FormNovedadComponent
     ],
     imports: [
         CommonModule,
         MaterialModule,
+        ReactiveFormsModule
     ],
     exports: [
-        LoaderComponent
+        LoaderComponent,
+        FormNovedadComponent
     ]
   })
   export class SharedModule { }

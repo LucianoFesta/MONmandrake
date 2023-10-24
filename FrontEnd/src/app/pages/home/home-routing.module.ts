@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home.component';
 import { CambiosComponent } from './components/cambios/cambios.component';
 import { MonitoreoComponent } from './components/monitoreo/monitoreo.component';
-import { AbmCambiosComponent } from './components/abm-cambios/abm-cambios.component';
 
 const routes: Routes = [
     {
@@ -11,9 +10,7 @@ const routes: Routes = [
         component: HomeComponent,
         children: [
             { path: '', component: CambiosComponent },
-            { path: 'monitoreo', component: MonitoreoComponent },
-            { path: 'cambios', component: AbmCambiosComponent },
-            { path: 'cambios/:id', component: AbmCambiosComponent },
+            { path: 'monitoreo', component: MonitoreoComponent }
         ]
     }
 ];

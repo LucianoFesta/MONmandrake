@@ -1,38 +1,52 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { formatDate } from '@angular/common';
-import { Component, Inject, inject } from '@angular/core';
+import { Component, Input, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
-import { Novedad } from 'src/app/interfaces/novedad';
 import { DbService } from 'src/app/services/db-service.service';
 
 @Component({
-  selector: 'app-dialog-novedad',
-  templateUrl: './dialog-novedad.component.html',
-  styleUrls: ['./dialog-novedad.component.css']
+  selector: 'app-form-novedad',
+  templateUrl: './form-novedad.component.html',
+  styleUrls: ['./form-novedad.component.css']
 })
-export class DialogNovedadComponent {
+export class FormNovedadComponent implements OnInit {
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: Novedad,
-    public router:Router,
-    public dialog: MatDialog,
-    public dbService:DbService,
     private fb:FormBuilder,
-    public dialogRef: MatDialogRef<DialogNovedadComponent>
+    public router:Router,
+    public dbService:DbService,
   ){
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
     );
-
-    console.log(this.edit)
   }
+
+  ngOnInit(): void {
+    if(this.edit){
+      this.dbService.findById(this.idNovedad).subscribe( novedad => {
+        this.formCreate.patchValue({
+          autor: novedad.autor,
+          responsable: novedad.responsable,
+          etiquetas: novedad.etiquetas.join(', '),
+          descripcion: novedad.descripcion,
+          estado: novedad.estado,
+          created_at: novedad.created_at,
+          updated_at: new Date(novedad.updated_at),
+        })
+        this.tags = novedad.etiquetas;
+      })
+    }
+  }
+
+  @Input() edit!:boolean;
+
+  @Input() idNovedad!:string;
 
   public tagCtrl = new FormControl('');
 
@@ -55,28 +69,35 @@ export class DialogNovedadComponent {
     updated_at:[''],
   });
 
-  public novedad:Novedad = this.data;
-
-  public edit:boolean = false;
-
-  editNovedad(){
-    this.edit = !this.edit;
-  }
-
-  eliminarNovedad(id:string){
-    this.dbService.deleteNovedad(id).subscribe(() => {
-      this.dialog.closeAll();
-      
-      location.reload();
-    });
-  }
 
   isValidField(field:string):boolean | null{
     return this.formCreate.controls[field].errors && this.formCreate.controls[field].touched;
   };
 
-  editNovedadById(id:string){
+  saveNovedad(){
+    if(this.formCreate.invalid){
+      this.formCreate.markAllAsTouched();
+      return;
+    }
 
+    let newNovedad = this.formCreate.value;
+
+    newNovedad.created_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
+    newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
+    newNovedad.responsable = this.formCreate.get('autor')?.value;
+    
+    this.dbService.createNovedad(newNovedad).pipe(
+      catchError((e) => {
+        console.log(e)
+        return of()
+      })
+    ).subscribe(() => {
+      window.location.reload();
+    })
+
+  };
+
+  editNovedadById(){
     if(this.formCreate.invalid){
       this.formCreate.markAllAsTouched();
       return;
@@ -85,14 +106,15 @@ export class DialogNovedadComponent {
     let newNovedad = this.formCreate.value;
 
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
+    newNovedad.responsable = this.formCreate.get('autor')?.value;
     
-    this.dbService.editNovedad(newNovedad, id).pipe(
+    this.dbService.editNovedad(newNovedad, this.idNovedad).pipe(
       catchError((e) => {
         console.log(e)
         return of()
       })
     ).subscribe(() => {
-      this.router.navigateByUrl('home');
+      window.location.reload();
     })
 
   };
@@ -102,6 +124,7 @@ export class DialogNovedadComponent {
 
     if (value) {
       this.tags.push(value);
+      this.formCreate.get('etiquetas')!.setValue(this.tags.join(', '));
     }
     event.chipInput!.clear();
     this.tagCtrl.setValue(null);
@@ -113,6 +136,7 @@ export class DialogNovedadComponent {
 
     if (index >= 0) {
       this.tags.splice(index, 1);
+      this.formCreate.get('etiquetas')!.setValue(this.tags.join(', '));
       this.announcer.announce(`Removed ${tag}`);
     }
   }
