@@ -1,28 +1,36 @@
 <div class="dialog">
   <h2 mat-dialog-title>{{ data.autor }} cargó el siguiente cambio:</h2>
-  <ul>
-    <li>
-      <span><b>Cambio: </b>{{ data.descripcion }}</span>
-    <li>
-      <span><b>Fecha de carga:</b> {{ data.created_at | date:'dd-MM-yyyy HH:mm' }} hs.</span>
-    </li>
-    <li>
-      <span *ngIf="data.estado == 1">
-        <b>Estado:</b> Activo.
-      </span>
-      <span *ngIf="data.estado != 1">
-        <b>Estado:</b> Finalizado.
-      </span>
-    </li>
-    <li>
-      <b>Afecta a:</b> {{ data.etiquetas }}
-    </li>
-  </ul>
+  <div *ngIf="!edit">
+    <ul>
+      <li>
+        <span><b>Cambio: </b>{{ data.descripcion }}</span>
+      <li>
+        <span><b>Fecha de carga:</b> {{ data.created_at | date:'dd-MM-yyyy HH:mm' }} hs.</span>
+      </li>
+      <li>
+        <span *ngIf="data.estado == 1">
+          <b>Estado:</b> Activo.
+        </span>
+        <span *ngIf="data.estado != 1">
+          <b>Estado:</b> Finalizado.
+        </span>
+      </li>
+      <li>
+        <b>Afecta a:</b> {{ data.etiquetas }}
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="edit">
+
+    <app-form-novedad [edit]="edit" [idNovedad]="data.id"></app-form-novedad>
+
+  </div>
 
   <div class="divFlex">
-    <div class="divFlex">
+    <div class="divFlex"*ngIf="!edit">
       <div mat-dialog-actions>
-        <button class="btnEdit" mat-button (click)="editNovedad(data.id)"><mat-icon>edit</mat-icon>Editar</button>
+        <button class="btnEdit" mat-button (click)="editNovedad()"><mat-icon>edit</mat-icon>Editar</button>
       </div>
       <div mat-dialog-actions>
         <button class="btnDelete" mat-button (click)="eliminarNovedad(data.id)"><mat-icon>delete</mat-icon>Eliminar</button>

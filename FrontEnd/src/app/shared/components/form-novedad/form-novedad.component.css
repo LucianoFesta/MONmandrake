@@ -1,5 +1,4 @@
-
-form{
+.form{
     width: 85vw;
     margin: 30px auto 10px auto;
     padding: 12px;
@@ -7,13 +6,29 @@ form{
     border-radius: 5px;
 }
 
+.formEdit{
+    padding: 12px;
+    margin: 0px 5px;
+    border-radius: 5px;
+    background-color: var(--azul-claro);
+}
+
 mat-form-field{
     width: 25vw;
+}
+
+.matFormFieldEdit{
+    margin-right: 5px;
 }
 
 .divFlex{
     display: flex;
     justify-content: space-around;
+    align-items: center;
+}
+
+.divFlexEdit{
+    display: flex;
     align-items: center;
 }
 
@@ -54,7 +69,7 @@ mat-form-field{
 }
 
 @media (max-width: 769px){
-    .divFlex{
+    .divFlex, .divFlexEdit{
         display: flex;
         flex-direction: column;
         justify-content: space-around;

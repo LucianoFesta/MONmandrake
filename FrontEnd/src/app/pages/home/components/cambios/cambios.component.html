@@ -38,11 +38,10 @@
 
 <app-loader *ngIf="!loader"></app-loader>
 
-
 <section *ngIf="loader" class="animate__animated animate__fadeIn">
   <h2>Lista de cambios</h2>
   
-  <app-abm-cambios></app-abm-cambios>
+  <app-form-novedad></app-form-novedad>
 
   <div *ngFor="let mes of sorted | paginate: { itemsPerPage: 3, currentPage: page }" class="divCard">
       <h3>{{ mes.split('-')[0] | uppercase }} - {{ mes.split('-')[1] }}</h3>

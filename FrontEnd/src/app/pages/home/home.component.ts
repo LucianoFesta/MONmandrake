@@ -13,12 +13,8 @@ export class HomeComponent {
 
   public itemsMenu:ItemsMenu[] = [
     {
-      name: 'Home',
-      url: '/home'
-    },
-    {
       name: 'Cambios',
-      url : '/home/cambios'
+      url: '/home'
     },
     {
       name: 'Monitoreo',

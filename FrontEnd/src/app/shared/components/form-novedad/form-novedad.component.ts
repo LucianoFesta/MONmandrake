@@ -1,27 +1,25 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { formatDate } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { DbService } from 'src/app/services/db-service.service';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
-  selector: 'app-abm-cambios',
-  templateUrl: './abm-cambios.component.html',
-  styleUrls: ['./abm-cambios.component.css']
+  selector: 'app-form-novedad',
+  templateUrl: './form-novedad.component.html',
+  styleUrls: ['./form-novedad.component.css']
 })
+export class FormNovedadComponent implements OnInit {
 
-export class AbmCambiosComponent implements OnInit{
-
-  constructor( 
+  constructor(
     private fb:FormBuilder,
-    private dbService:DbService,
-    private router:Router,
-    private route:ActivatedRoute
+    public router:Router,
+    public dbService:DbService,
   ){
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null),
@@ -30,27 +28,25 @@ export class AbmCambiosComponent implements OnInit{
   }
 
   ngOnInit(): void {
-
-    this.route.params.subscribe( params => {
-      if(params['id']){
-        this.edit = true;
-        this.idNovedad = params['id'];
-
-        this.dbService.findById(this.idNovedad).subscribe( novedad => {
-          this.formCreate.patchValue({
-            autor: novedad.autor,
-            responsable: novedad.responsable,
-            etiquetas: novedad.etiquetas,
-            descripcion: novedad.descripcion,
-            estado: novedad.estado,
-            created_at: novedad.created_at,
-            updated_at: new Date(novedad.updated_at),
-          })
+    if(this.edit){
+      this.dbService.findById(this.idNovedad).subscribe( novedad => {
+        this.formCreate.patchValue({
+          autor: novedad.autor,
+          responsable: novedad.responsable,
+          etiquetas: novedad.etiquetas.join(', '),
+          descripcion: novedad.descripcion,
+          estado: novedad.estado,
+          created_at: novedad.created_at,
+          updated_at: new Date(novedad.updated_at),
         })
-      }
-    })
-    
+        this.tags = novedad.etiquetas;
+      })
+    }
   }
+
+  @Input() edit!:boolean;
+
+  @Input() idNovedad!:string;
 
   public tagCtrl = new FormControl('');
 
@@ -64,14 +60,6 @@ export class AbmCambiosComponent implements OnInit{
 
   public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Pepito', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
 
-  public edit = false;
-  
-  private idNovedad!:string;
-
-  public etiquetas:string[] = [
-    "Abacom", "Web", "Autorizador", "Jboss", "Pepito", "SQL", "Openshift", "Servidor", "MongoDB"
-  ];
-
   public formCreate:FormGroup = this.fb.group({
     autor: ['', [ Validators.required ]],
     etiquetas: ['', [Validators.required]],
@@ -80,7 +68,12 @@ export class AbmCambiosComponent implements OnInit{
     created_at:[''],
     updated_at:[''],
   });
- 
+
+
+  isValidField(field:string):boolean | null{
+    return this.formCreate.controls[field].errors && this.formCreate.controls[field].touched;
+  };
+
   saveNovedad(){
     if(this.formCreate.invalid){
       this.formCreate.markAllAsTouched();
@@ -93,7 +86,6 @@ export class AbmCambiosComponent implements OnInit{
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.responsable = this.formCreate.get('autor')?.value;
     
-
     this.dbService.createNovedad(newNovedad).pipe(
       catchError((e) => {
         console.log(e)
@@ -105,7 +97,7 @@ export class AbmCambiosComponent implements OnInit{
 
   };
 
-  editNovedad(){
+  editNovedadById(){
     if(this.formCreate.invalid){
       this.formCreate.markAllAsTouched();
       return;
@@ -114,20 +106,17 @@ export class AbmCambiosComponent implements OnInit{
     let newNovedad = this.formCreate.value;
 
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
+    newNovedad.responsable = this.formCreate.get('autor')?.value;
     
-    this.dbService.editNovedad(newNovedad,this.idNovedad).pipe(
+    this.dbService.editNovedad(newNovedad, this.idNovedad).pipe(
       catchError((e) => {
         console.log(e)
         return of()
       })
     ).subscribe(() => {
-      this.router.navigateByUrl('home');
+      window.location.reload();
     })
 
-  };
-
-  isValidField(field:string):boolean | null{
-    return this.formCreate.controls[field].errors && this.formCreate.controls[field].touched;
   };
 
   add(event: MatChipInputEvent): void {
@@ -135,6 +124,7 @@ export class AbmCambiosComponent implements OnInit{
 
     if (value) {
       this.tags.push(value);
+      this.formCreate.get('etiquetas')!.setValue(this.tags.join(', '));
     }
     event.chipInput!.clear();
     this.tagCtrl.setValue(null);
@@ -146,6 +136,7 @@ export class AbmCambiosComponent implements OnInit{
 
     if (index >= 0) {
       this.tags.splice(index, 1);
+      this.formCreate.get('etiquetas')!.setValue(this.tags.join(', '));
       this.announcer.announce(`Removed ${tag}`);
     }
   }
@@ -160,6 +151,5 @@ export class AbmCambiosComponent implements OnInit{
 
     return this.allTags.filter(tag => tag.toLowerCase().includes(filterValue));
   }
-  
 
 }
