@@ -30,8 +30,6 @@ export class DialogNovedadComponent {
       startWith(null),
       map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
     );
-
-    console.log(this.edit)
   }
 
   public tagCtrl = new FormControl('');
