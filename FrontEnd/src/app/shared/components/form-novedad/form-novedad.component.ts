@@ -33,7 +33,7 @@ export class FormNovedadComponent implements OnInit {
         this.formCreate.patchValue({
           autor: novedad.autor,
           responsable: novedad.responsable,
-          etiquetas: novedad.etiquetas.join(', '),
+          etiquetas: novedad.etiquetas,
           descripcion: novedad.descripcion,
           estado: novedad.estado,
           created_at: novedad.created_at,
@@ -41,6 +41,7 @@ export class FormNovedadComponent implements OnInit {
         })
         this.tags = novedad.etiquetas;
       })
+      
     }
   }
 

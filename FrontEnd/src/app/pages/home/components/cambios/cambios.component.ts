@@ -29,17 +29,18 @@ export class CambiosComponent implements OnInit {
 
   public sorted:string[] = []
 
-  public valoresColores: { [valor: string]: string } = {
-    "Abacom": '#f73b3b',
-    "Web": '#02a71d',
-    "Jboss": '#605fb4',
-    "Autorizador": '#e4be40',
-    "Pepito": '#e4be40',
-    "SQL": '#g4ae50',
-    "MongoDB": '#f4be90',
-    "Openshift": '#f4be50',
-    "Servidor": '#a4be40',
-  };
+  // public valoresColores: { [valor: string]: string } = {
+  //   "Abacom": '#f73b3b',
+  //   "Web": '#02a71d',
+  //   "Jboss": '#605fb4',
+  //   "Autorizador": '#e4be40',
+  //   "Pepito": '#e4be40',
+  //   "SQL": '#g4ae50',
+  //   "MongoDB": '#f4be90',
+  //   "Openshift": '#f4be50',
+  //   "Servidor": '#a4be40',
+  // };
+  // [style.background-color]="valoresColores[etiqueta]" atributo del btn en el front
 
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
@@ -117,6 +118,10 @@ export class CambiosComponent implements OnInit {
     const newKeyword = this.searchInput.nativeElement.value.toLowerCase();
     this.keyword = newKeyword;
 
+    if(this.tagSelected.length > 0){
+      this.searchByKeywordAndTags(this.tagSelected,this.keyword);
+    }
+
     if(this.keyword && this.tagSelected.length == 0){
       
       this.dbService.getNovedadesByKeyword(newKeyword).subscribe( (novedades:Novedad[]) => {
@@ -152,6 +157,10 @@ export class CambiosComponent implements OnInit {
   searchByTags(tags: string[]) {
     this.tagSelected = tags;
 
+    if(this.keyword){
+      this.searchByKeywordAndTags(tags, this.keyword);
+    }
+
     if(this.tagSelected.length > 0 && !this.keyword){
       this.dbService.getNovedadesByTags(tags).subscribe( (novedades:Novedad[]) => {
         this.filteredNovedades = {};
@@ -184,25 +193,34 @@ export class CambiosComponent implements OnInit {
   }
   
   searchByKeywordAndTags(tags:string[], keyword:string){
-    
-    this.dbService.getNovedadesByKeywordAndTags(tags, keyword).subscribe((novedades:Novedad[]) => {
-      this.filteredNovedades = {};
-      
-      novedades.forEach((novedad:Novedad) => {
-        const fecha = new Date(novedad.created_at);
-        const mes = fecha.toLocaleString('es-ES',{month:'long'});
-        const anio = fecha.getFullYear();
-        const key = `${mes}-${anio}`;
 
-        if(!this.filteredNovedades[key]){
-          this.filteredNovedades[key] = [];
-        }
-        this.filteredNovedades[key].push(novedad);
-
+    if(this.tagSelected.length > 0 && keyword){
+      this.dbService.getNovedadesByKeywordAndTags(tags, keyword).subscribe((novedades:Novedad[]) => {
+        this.filteredNovedades = {};
+        
+        novedades.forEach((novedad:Novedad) => {
+          const fecha = new Date(novedad.created_at);
+          const mes = fecha.toLocaleString('es-ES',{month:'long'});
+          const anio = fecha.getFullYear();
+          const key = `${mes}-${anio}`;
+  
+          if(!this.filteredNovedades[key]){
+            this.filteredNovedades[key] = [];
+          }
+          this.filteredNovedades[key].push(novedad);
+  
+        });
+        this.sorted = this.sortedList(this.filteredNovedades);
+  
       });
-      this.sorted = this.sortedList(this.filteredNovedades);
+    }else if(!keyword && tags){
+      this.searchByTags(tags);
 
-    });
+    }else{
+      this.searchNovedadesByKeyword();
+      
+    }
+
     this.sorted = this.sortedList(this.filteredNovedades);
   }
 
