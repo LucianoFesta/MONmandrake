@@ -39,12 +39,12 @@
 <app-loader *ngIf="!loader"></app-loader>
 
 <section *ngIf="loader" class="animate__animated animate__fadeIn">
-  <h2>Lista de cambios</h2>
+  <h3>Lista de cambios</h3>
   
   <app-form-novedad></app-form-novedad>
 
   <div *ngFor="let mes of sorted | paginate: { itemsPerPage: 3, currentPage: page }" class="divCard">
-      <h3>{{ mes.split('-')[0] | uppercase }} - {{ mes.split('-')[1] }}</h3>
+      <h4>{{ mes.split('-')[0] | titlecase }} - {{ mes.split('-')[1] }}</h4>
       <mat-card *ngFor="let item of filteredNovedades[mes]" (click)="openDialog(item)">
           <div class="contentCard">
               <div class="iconChange">
@@ -55,11 +55,10 @@
                   </div>
               </div>
               <div class="infoChange">
-                  <mat-card-content>{{ item.descripcion | uppercase }}</mat-card-content>
+                  <mat-card-content>{{ item.descripcion | titlecase }}</mat-card-content>
                   <div class="etiquetas">
-                      <button *ngFor="let etiqueta of item.etiquetas" 
-                              mat-raised-button
-                              [style.background-color]="valoresColores[etiqueta]">
+                      <button class="tags" *ngFor="let etiqueta of item.etiquetas" 
+                              mat-raised-button>
                           {{etiqueta}}
                       </button>
                   </div>

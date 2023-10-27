@@ -16,14 +16,14 @@ export class HomeComponent {
       name: 'Cambios',
       url: '/home'
     },
-    {
-      name: 'Monitoreo',
-      url: '/home/monitoreo'
-    },
-    {
-      name: 'APPs',
-      url: '/home/apps'
-    }
+    // {
+    //   name: 'Monitoreo',
+    //   url: '/home/monitoreo'
+    // },
+    // {
+    //   name: 'APPs',
+    //   url: '/home/apps'
+    // }
   ]
 
 }

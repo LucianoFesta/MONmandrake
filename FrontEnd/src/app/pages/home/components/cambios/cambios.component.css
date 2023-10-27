@@ -10,7 +10,11 @@ mat-form-field{
     background: linear-gradient(45deg, var(--azul-global), var(--azul-claro));
     border-radius: 3px;
     margin-bottom: 50px;
-    box-shadow: 0 0 10px 10px var(--azul-claro);
+    box-shadow: 0 0 5px 5px var(--azul-claro);
+}
+
+.tags{
+    background-color: #b15403c2!important;
 }
 
 .btnTags{
@@ -50,7 +54,7 @@ form{
     font-size: 10px;
     flex-direction: column;
     align-items: center;
-    border: 1.5px black solid;
+    border: 1.5px #b15403c2 solid;
     border-radius: 20px;
     padding: 5px 15px;
 }
@@ -67,7 +71,7 @@ section{
     border-radius: 3px;
 }
 
-h2{
+h3{
     position: absolute;
     top: -18px;
     left: -2px;
@@ -77,8 +81,9 @@ h2{
     padding: 5px 15px;
 }
 
-h3{
+h4{
     padding: 15px;
+    color: rgb(58, 58, 111);
     font-weight: bold;
 }
 
@@ -135,21 +140,11 @@ button {
     padding: 40px;
 }
 
-h2{
-    position: absolute;
-    top: -18px;
-    left: -2px;
-    background-color: var(--azul-global);
-    color: aliceblue;
-    border-radius: 10px;
-    padding: 5px 15px;
-}
 
 pagination-controls{
     display: flex;
     justify-content: end;
 }
-
 
 
 .my-pagination /deep/ .ngx-pagination .current {
