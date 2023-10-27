@@ -6,8 +6,8 @@
   </div>
   <div class="navBar">
     <mat-button-toggle-group aria-label="Font Style">
-      <mat-button-toggle *ngFor="let item of itemsMenu" 
-        [routerLink]="item.url" 
+      <mat-button-toggle *ngFor="let item of itemsMenu"
+        [routerLink]="item.url"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
         [checked]="router.url == item.url">
