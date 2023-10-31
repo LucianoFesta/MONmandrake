@@ -1,0 +1,69 @@
+---
+version: '3.1'
+
+volumes:
+    prometheus1_data: {}
+    grafana_data: {}
+
+services:
+  prometheus-1:
+    image: prom/prometheus:v2.27.0
+    networks:
+        - local2
+    volumes:
+        - ./prometheus/:/etc/prometheus/
+        #- prometheus1_data:/prometheus
+    command:
+        - '--config.file=/etc/prometheus/prometheus1.yaml'
+        - '--storage.tsdb.path=/prometheus'
+        - '--storage.tsdb.max-block-duration=30m'
+        - '--storage.tsdb.min-block-duration=30m'
+        - '--web.enable-lifecycle'
+        - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+        - '--storage.tsdb.retention.time=6h'
+        - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+        - 9081:9090
+
+  grafana:
+    image: grafana/grafana:10.0.1
+    networks:
+        - local2
+    user: "104"
+    depends_on:
+        - prometheus-1
+    ports:
+        - 3000:3000
+    restart: always
+    
+    
+  tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./shared/tempo.yaml:/etc/tempo.yaml
+      - ./tempo-data:/tmp/tempo
+    ports:
+      - "14268:14268"  # jaeger ingest
+      - "3200:3200"   # tempo
+      #- "9095:9095" # tempo grpc
+      #- "4317:4317"  # otlp grpc
+      - "4318:4318"  # otlp http
+      #- "9411:9411"   # zipkin
+
+  tempo-query:
+    image: grafana/tempo-query:latest
+    command: [ "--grpc-storage-plugin.configuration-file=/etc/tempo-query.yaml" ]
+    volumes:
+      - ./tempo-query.yaml:/etc/tempo-query.yaml
+    ports:
+      - "16686:16686"  # jaeger-ui
+    depends_on:
+      - tempo
+        
+networks:
+  local2:
+    #traefik-public:
+    #  driver: overlay
+    #monitoring:
+    #  internal: true
