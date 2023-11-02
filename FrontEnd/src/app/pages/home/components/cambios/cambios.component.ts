@@ -50,7 +50,7 @@ export class CambiosComponent implements OnInit {
 
   public tags: string[] = [];
 
-  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Pepito', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
+  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
   
   public announcer = inject(LiveAnnouncer);
 
@@ -238,15 +238,21 @@ export class CambiosComponent implements OnInit {
   }
   
   add(event: MatChipInputEvent): void {
+    const input = event.input;
     const value = (event.value || '').trim();
-
+  
     if (value) {
       this.tags.push(value);
     }
-    event.chipInput!.clear();
-    this.tagCtrl.setValue(null);
 
+    if (input) {
+      input.value = '';
+    }
+
+    this.tagCtrl.setValue(null);
+    this.searchByTags(this.tags);
   }
+  
 
   remove(tag: string): void {
     const index = this.tags.indexOf(tag);

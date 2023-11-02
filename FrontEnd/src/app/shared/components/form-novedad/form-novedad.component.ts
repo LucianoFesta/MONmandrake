@@ -59,7 +59,7 @@ export class FormNovedadComponent implements OnInit {
 
   public tags: string[] = [];
 
-  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Pepito', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
+  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
 
   public formCreate:FormGroup = this.fb.group({
     autor: ['', [ Validators.required ]],
