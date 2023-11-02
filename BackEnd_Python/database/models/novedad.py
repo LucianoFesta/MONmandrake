@@ -8,5 +8,6 @@ class Novedad(BaseModel):
     created_at:str
     updated_at:str
     descripcion:str
+    titulo:str
     etiquetas:List[str]
     estado:int

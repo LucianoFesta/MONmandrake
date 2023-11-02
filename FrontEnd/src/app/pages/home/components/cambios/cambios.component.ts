@@ -50,7 +50,7 @@ export class CambiosComponent implements OnInit {
 
   public tags: string[] = [];
 
-  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
+  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Sql', 'MongoDB', 'Openshift', 'Servidor'];
   
   public announcer = inject(LiveAnnouncer);
 
