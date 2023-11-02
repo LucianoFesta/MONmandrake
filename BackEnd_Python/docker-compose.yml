@@ -1,0 +1,14 @@
+version: '3.1'
+services:
+  backpython:
+    image: 'backpython:2'
+    environment:
+      - OTEL_SERVICE_NAME=backpython 
+      - OTEL_TRACES_EXPORTER=console,otlp
+      - OTEL_METRICS_EXPORTER=console
+      # - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=0.0.0.0:4317
+      - OTEL_GRPC_ENDPOINT=192.168.1.12:4317
+    ports:
+      - 8000:8000
+    volumes: 
+      - .:/usr/src/app
