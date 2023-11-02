@@ -8,6 +8,7 @@ def novedadSchema(novedad) -> dict:
             "created_at":novedad["created_at"],
             "updated_at":novedad["updated_at"],
             "descripcion":novedad["descripcion"],
+            "titulo":novedad["titulo"],
             "etiquetas":novedad["etiquetas"],
             "estado":novedad["estado"],
             }

@@ -5,6 +5,7 @@ export interface Novedad {
     created_at:  string;
     updated_at:  string;
     descripcion: string;
+    titulo:      string;
     etiquetas:   string[];
     estado:      number;
 }

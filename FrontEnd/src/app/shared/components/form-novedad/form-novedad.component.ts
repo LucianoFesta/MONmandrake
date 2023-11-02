@@ -35,13 +35,14 @@ export class FormNovedadComponent implements OnInit {
           responsable: novedad.responsable,
           etiquetas: novedad.etiquetas,
           descripcion: novedad.descripcion,
+          titulo: novedad.titulo,
           estado: novedad.estado,
           created_at: novedad.created_at,
           updated_at: new Date(novedad.updated_at),
         })
         this.tags = novedad.etiquetas;
       })
-      
+
     }
   }
 
@@ -59,12 +60,13 @@ export class FormNovedadComponent implements OnInit {
 
   public tags: string[] = [];
 
-  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'SQL', 'MongoDB', 'Openshift', 'Servidor'];
+  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Sql', 'MongoDB', 'Openshift', 'Servidor'];
 
   public formCreate:FormGroup = this.fb.group({
     autor: ['', [ Validators.required ]],
     etiquetas: ['', [Validators.required]],
     descripcion: ['', [ Validators.required ]],
+    titulo: ['', [Validators.required]],
     estado:[1],
     created_at:[''],
     updated_at:[''],
@@ -86,7 +88,7 @@ export class FormNovedadComponent implements OnInit {
     newNovedad.created_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.responsable = this.formCreate.get('autor')?.value;
-    
+
     this.dbService.createNovedad(newNovedad).pipe(
       catchError((e) => {
         console.log(e)
@@ -108,7 +110,7 @@ export class FormNovedadComponent implements OnInit {
 
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.responsable = this.formCreate.get('autor')?.value;
-    
+
     this.dbService.editNovedad(newNovedad, this.idNovedad).pipe(
       catchError((e) => {
         console.log(e)
