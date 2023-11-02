@@ -61,7 +61,15 @@ async def getListFilteredByKeywordAndTags(keyword:str, tags:List[str] = Query(..
     if not keyword and tags:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags y palabra clave a buscar.')
     
-    listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'},'etiquetas':{'$all':tags} })
+    query = {
+        "$or": [
+            {"descripcion": {'$regex': keyword, '$options': 'i'}},
+            {"titulo": {'$regex': keyword, '$options': 'i'}}
+        ],
+        'etiquetas':{'$all':tags}
+    }
+    
+    listFiltered = db_client.novedads.find(query)
     listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
     
     result = [Novedad(**novedadSchema(item)) for item in listFiltered]
