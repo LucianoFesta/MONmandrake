@@ -14,22 +14,33 @@
 }
 
 mat-form-field{
-    width: 25vw;
+    width: 37vw;
 }
 
 .matFormFieldEdit{
     margin-right: 5px;
+    width: 32vw;
 }
 
 .divFlex{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
+}
+
+.divFlex div{
+  width: 100px;
 }
 
 .divFlexEdit{
     display: flex;
     align-items: center;
+    justify-content: space-between;
+}
+
+.divFlexEdit .btn{
+  margin-right: 20px;
+  width: 50px;
 }
 
 .btn{

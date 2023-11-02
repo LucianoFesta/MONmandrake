@@ -24,14 +24,20 @@ async def findAll():
 
 
 @router.get("/listByKeyword", response_model=List[Novedad], status_code=status.HTTP_200_OK)
-async def getListFilteredByKeyword(keyword:str = Query(..., description='Palabra clave')):
+async def getListFilteredByKeyword(keyword: str = Query(..., description='Palabra clave')):
     if not keyword:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existe palabra clave a buscar.')
     
-    listFiltered = db_client.novedads.find({"descripcion":{'$regex':keyword, '$options':'i'}}) #Busca el tag en descripcion y option i es que no tenga en cuenta mayus y minus.
-    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)#Toma created_at del elemento como parámetro de ordenamiento.
+    query = {
+        "$or": [
+            {"descripcion": {'$regex': keyword, '$options': 'i'}},
+            {"titulo": {'$regex': keyword, '$options': 'i'}}
+        ]
+    }
+
+    listFiltered = db_client.novedads.find(query)
+    listFiltered = sorted(listFiltered, key=lambda novedad: novedad['created_at'], reverse=True)
     
-    #Recorre el listado y convierte una instancia de Novedad en base a los datos del novedadSchema (usa el _id como id).
     result = [Novedad(**novedadSchema(item)) for item in listFiltered]
     
     return result

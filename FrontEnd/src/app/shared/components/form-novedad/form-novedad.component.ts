@@ -42,7 +42,7 @@ export class FormNovedadComponent implements OnInit {
         })
         this.tags = novedad.etiquetas;
       })
-      
+
     }
   }
 
@@ -66,7 +66,7 @@ export class FormNovedadComponent implements OnInit {
     autor: ['', [ Validators.required ]],
     etiquetas: ['', [Validators.required]],
     descripcion: ['', [ Validators.required ]],
-    titulo: ['', Validators.required],
+    titulo: ['', [Validators.required]],
     estado:[1],
     created_at:[''],
     updated_at:[''],
@@ -88,7 +88,7 @@ export class FormNovedadComponent implements OnInit {
     newNovedad.created_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.responsable = this.formCreate.get('autor')?.value;
-    
+
     this.dbService.createNovedad(newNovedad).pipe(
       catchError((e) => {
         console.log(e)
@@ -110,7 +110,7 @@ export class FormNovedadComponent implements OnInit {
 
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.responsable = this.formCreate.get('autor')?.value;
-    
+
     this.dbService.editNovedad(newNovedad, this.idNovedad).pipe(
       catchError((e) => {
         console.log(e)
