@@ -10,14 +10,14 @@
     </mat-form-field>
 
     <mat-chip-option matTooltip="Buscá por etiquetas." (click)="openTags()" class="btnTags"><span class="material-symbols-outlined">style</span></mat-chip-option>
-    
+
     <form *ngIf="searchTags">
         <mat-form-field class="example-chip-list">
           <mat-label>Buscar por Etiquetas</mat-label>
           <mat-chip-grid #chipGrid>
             <mat-chip-row *ngFor="let tag of tags" (removed)="remove(tag)">
               {{ tag }}
-              <button class="delete" matChipRemove [attr.aria-label]="'remove ' + tag"> 
+              <button class="delete" matChipRemove [attr.aria-label]="'remove ' + tag">
                 <mat-icon>cancel</mat-icon>
               </button>
             </mat-chip-row>
@@ -33,14 +33,14 @@
           </mat-autocomplete>
         </mat-form-field>
       </form>
-   
+
 </div>
 
 <app-loader *ngIf="!loader"></app-loader>
 
 <section *ngIf="loader" class="animate__animated animate__fadeIn">
   <h3>Lista de cambios</h3>
-  
+
   <app-form-novedad></app-form-novedad>
 
   <div *ngFor="let mes of sorted | paginate: { itemsPerPage: 3, currentPage: page }" class="divCard">
@@ -55,9 +55,9 @@
                   </div>
               </div>
               <div class="infoChange">
-                  <mat-card-content>{{ item.titulo| titlecase }}</mat-card-content>
+                  <mat-card-content>{{ item.titulo| uppercase }}</mat-card-content>
                   <div class="etiquetas">
-                      <button class="tags" *ngFor="let etiqueta of item.etiquetas" 
+                      <button class="tags" *ngFor="let etiqueta of item.etiquetas"
                               mat-raised-button>
                           {{etiqueta}}
                       </button>
@@ -66,9 +66,9 @@
           </div>
       </mat-card>
   </div>
-  
+
   <div *ngIf="isEmpty(filteredNovedades)" class="listEmpty">
-      <p>No hay novedades con la búsqueda seleccionada.</p> 
+      <p>No hay novedades con la búsqueda seleccionada.</p>
   </div>
 </section>
 

@@ -19,7 +19,8 @@ import { DbService } from 'src/app/services/db-service.service';
 export class DialogNovedadComponent {
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: Novedad,
+    @Inject(MAT_DIALOG_DATA)
+    public data: Novedad,
     public router:Router,
     public dialog: MatDialog,
     public dbService:DbService,
@@ -64,7 +65,7 @@ export class DialogNovedadComponent {
   eliminarNovedad(id:string){
     this.dbService.deleteNovedad(id).subscribe(() => {
       this.dialog.closeAll();
-      
+
       location.reload();
     });
   }
@@ -83,7 +84,7 @@ export class DialogNovedadComponent {
     let newNovedad = this.formCreate.value;
 
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
-    
+
     this.dbService.editNovedad(newNovedad, id).pipe(
       catchError((e) => {
         console.log(e)
