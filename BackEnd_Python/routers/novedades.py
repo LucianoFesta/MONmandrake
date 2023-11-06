@@ -16,7 +16,7 @@ async def findAll():
     
     list = db_client.novedads.find()
     
-    listSort = sorted(list, key=lambda novedad:novedad['created_at'], reverse=True)
+    listSort = sorted(list, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
     
     result = [Novedad(**novedadSchema(item)) for item in listSort]
     
@@ -36,7 +36,7 @@ async def getListFilteredByKeyword(keyword: str = Query(..., description='Palabr
     }
 
     listFiltered = db_client.novedads.find(query)
-    listFiltered = sorted(listFiltered, key=lambda novedad: novedad['created_at'], reverse=True)
+    listFiltered = sorted(listFiltered, key=lambda novedad: novedad['fechaNovedad'], reverse=True)
     
     result = [Novedad(**novedadSchema(item)) for item in listFiltered]
     
@@ -49,7 +49,7 @@ async def getListFilteredByTags(tags:List[str] = Query(..., description='Lista d
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags a buscar.')
     
     listFiltered = db_client.novedads.find({'etiquetas':{'$all':tags}}) #All hace que devuelva los que tienen todos los tags.
-    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
     
     result = [Novedad(**novedadSchema(item)) for item in listFiltered]
 
@@ -70,7 +70,7 @@ async def getListFilteredByKeywordAndTags(keyword:str, tags:List[str] = Query(..
     }
     
     listFiltered = db_client.novedads.find(query)
-    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['created_at'], reverse=True)
+    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
     
     result = [Novedad(**novedadSchema(item)) for item in listFiltered]
     
