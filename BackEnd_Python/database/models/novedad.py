@@ -7,6 +7,7 @@ class Novedad(BaseModel):
     responsable:str
     created_at:str
     updated_at:str
+    fechaNovedad:str
     descripcion:str
     titulo:str
     etiquetas:List[str]

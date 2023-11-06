@@ -34,6 +34,7 @@ export class FormNovedadComponent implements OnInit {
           autor: novedad.autor,
           responsable: novedad.responsable,
           etiquetas: novedad.etiquetas,
+          fechaNovedad: new Date(novedad.fechaNovedad),
           descripcion: novedad.descripcion,
           titulo: novedad.titulo,
           estado: novedad.estado,
@@ -64,9 +65,10 @@ export class FormNovedadComponent implements OnInit {
 
   public formCreate:FormGroup = this.fb.group({
     autor: ['', [ Validators.required ]],
-    etiquetas: ['', [Validators.required]],
+    etiquetas: ['', [ Validators.required ]],
     descripcion: ['', [ Validators.required ]],
-    titulo: ['', [Validators.required]],
+    titulo: ['', [ Validators.required ]],
+    fechaNovedad: [ new Date(), [ Validators.required ]],
     estado:[1],
     created_at:[''],
     updated_at:[''],
@@ -87,7 +89,10 @@ export class FormNovedadComponent implements OnInit {
 
     newNovedad.created_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.updated_at = formatDate(Date.now(), 'yyyy-MM-ddTHH:mm', 'en-US');
+    newNovedad.fechaNovedad = formatDate(this.formCreate.get('fechaNovedad')?.value, 'yyyy-MM-ddTHH:mm', 'en-US');
     newNovedad.responsable = this.formCreate.get('autor')?.value;
+
+    console.log(newNovedad)
 
     this.dbService.createNovedad(newNovedad).pipe(
       catchError((e) => {

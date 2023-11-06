@@ -29,19 +29,6 @@ export class CambiosComponent implements OnInit {
 
   public sorted:string[] = []
 
-  // public valoresColores: { [valor: string]: string } = {
-  //   "Abacom": '#f73b3b',
-  //   "Web": '#02a71d',
-  //   "Jboss": '#605fb4',
-  //   "Autorizador": '#e4be40',
-  //   "Pepito": '#e4be40',
-  //   "SQL": '#g4ae50',
-  //   "MongoDB": '#f4be90',
-  //   "Openshift": '#f4be50',
-  //   "Servidor": '#a4be40',
-  // };
-  // [style.background-color]="valoresColores[etiqueta]" atributo del btn en el front
-
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
   public tagCtrl = new FormControl('');
@@ -83,7 +70,7 @@ export class CambiosComponent implements OnInit {
     this.dbService.getNovedades().subscribe( novedades => {
   
       novedades.forEach((novedad:Novedad) => {
-        const fecha = new Date(novedad.created_at);
+        const fecha = new Date(novedad.fechaNovedad);
         const mes = fecha.toLocaleString('es-ES',{month:'long'});
         const anio = fecha.getFullYear();
         const key = `${mes}-${anio}`;
@@ -129,7 +116,7 @@ export class CambiosComponent implements OnInit {
         
         novedades.forEach((novedad:Novedad) => {
           
-          const fecha = new Date(novedad.created_at);
+          const fecha = new Date(novedad.fechaNovedad);
           const mes = fecha.toLocaleString('es-ES',{month:'long'});
           const anio = fecha.getFullYear();
           const key = `${mes}-${anio}`;
@@ -166,7 +153,7 @@ export class CambiosComponent implements OnInit {
         this.filteredNovedades = {};
 
         novedades.forEach((novedad:Novedad) => {
-          const fecha = new Date(novedad.created_at);
+          const fecha = new Date(novedad.fechaNovedad);
           const mes = fecha.toLocaleString('es-ES',{month:'long'});
           const anio = fecha.getFullYear();
           const key = `${mes}-${anio}`;
@@ -199,7 +186,7 @@ export class CambiosComponent implements OnInit {
         this.filteredNovedades = {};
         
         novedades.forEach((novedad:Novedad) => {
-          const fecha = new Date(novedad.created_at);
+          const fecha = new Date(novedad.fechaNovedad);
           const mes = fecha.toLocaleString('es-ES',{month:'long'});
           const anio = fecha.getFullYear();
           const key = `${mes}-${anio}`;

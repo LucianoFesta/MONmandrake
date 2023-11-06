@@ -7,10 +7,11 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatChipsModule}  from '@angular/material/chips';
-import {MatTooltip, MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
   declarations: [],
@@ -27,7 +28,9 @@ import {MatTooltip, MatTooltipModule} from '@angular/material/tooltip';
     MatSelectModule,
     MatAutocompleteModule,
     MatChipsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    CalendarModule
+
   ]
 
 })
