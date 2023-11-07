@@ -12,8 +12,8 @@
         {{ item.name }}
       </mat-button-toggle>
     </mat-button-toggle-group>
-    <button class="logoPerfil" mat-fab color="link"> 
-      <span class="material-symbols-outlined perfil">person</span> 
+    <button matTooltip="Cerrar Sesión" class="logoPerfil" mat-fab color="link" (click)="logout()"> 
+      <span class="material-symbols-outlined perfil">logout</span> 
     </button>
   </div>
 </div>

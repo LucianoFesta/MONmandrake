@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Novedad } from '../interfaces/novedad';
@@ -9,6 +9,10 @@ import { Novedad } from '../interfaces/novedad';
 export class DbService {
 
   constructor( private http:HttpClient ) { }
+
+  /********************************************************************************************* */
+  /*****************************RUTAS PARA MANIPULAR NOVEDADES ***********************************/
+  /********************************************************************************************* */
 
   getNovedades():Observable<Novedad[]>{
     return this.http.get<Novedad[]>('http://localhost:8000/novedades/listado');
@@ -40,6 +44,23 @@ export class DbService {
 
   deleteNovedad(id:string){
     return this.http.delete(`http://localhost:8000/novedades/eliminarNovedad/${id}`);
+  }
+
+
+  /********************************************************************************************* */
+  /***************************************RUTA LOGIN *********************************************/
+  /********************************************************************************************* */
+
+  login(username:string, password:string){
+    const body = new URLSearchParams();
+    body.set('username', username);
+    body.set('password', password);
+  
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
+    
+    return this.http.post('http://localhost:8000/login', body.toString(), { headers: headers });
   }
 
 }

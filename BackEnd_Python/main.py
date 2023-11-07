@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import novedades
+from routers import novedades, login
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -19,3 +19,4 @@ app.add_middleware(
 )
 
 app.include_router(novedades.router)
+app.include_router(login.router)

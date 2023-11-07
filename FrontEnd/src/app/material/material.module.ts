@@ -12,6 +12,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatChipsModule}  from '@angular/material/chips';
 import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 import { CalendarModule } from 'primeng/calendar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [],
@@ -29,7 +30,8 @@ import { CalendarModule } from 'primeng/calendar';
     MatAutocompleteModule,
     MatChipsModule,
     MatTooltipModule,
-    CalendarModule
+    CalendarModule,
+    MatSnackBarModule
 
   ]
 
