@@ -1,17 +1,22 @@
 import requests
 import json
 from fastapi import APIRouter, Form, status, HTTPException
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+client_id = os.getenv("client_id")
+cookie = os.getenv("cookie")
+keycloak_url = os.getenv("keycloak_url")
+grant_type= os.getenv("grant_type")
+
 
 router = APIRouter(prefix="/login", 
                    responses={status.HTTP_404_NOT_FOUND: {"message":"No encontrado."}})
 
-cookie = '75f8e7a40913f5de3f1eac946a82305a=034a6f312e4f581a16776ed53ccb0f17'
-client_id = "monstatuspage"
-
 @router.post("/")
 def get_token(username: str = Form(...), password:str = Form(...)):
-    grant_type = 'password'
-    keycloak_url = "https://sso-test.sancorsalud.com.ar/auth/realms/sancorsalud/protocol/openid-connect/token"
+    
     payload = f"client_id={client_id}&username={username}&grant_type={grant_type}&password={password}"
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
