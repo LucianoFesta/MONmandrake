@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from configparser import ConfigParser
 
-configFile = 'config.ini'
+configFile = 'configuration.ini'
 
 config = ConfigParser()
 config.read(configFile)
