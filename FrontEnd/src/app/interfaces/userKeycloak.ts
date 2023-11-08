@@ -46,4 +46,5 @@ export interface User {
 	fullName:string;
     emailVerify: boolean;
 	expToken:number;
+	token:string;
 }

@@ -60,7 +60,8 @@ export class LoginComponent {
               name: decoded.given_name,
               roles: decoded.resource_access.monstatuspage.roles,
               emailVerify: decoded.email_verified,
-              expToken: decoded.exp * 1000
+              expToken: decoded.exp * 1000,
+              token: data.access_token
             }
 
             localStorage.setItem('userCurrent', JSON.stringify(keyCloakUser));
