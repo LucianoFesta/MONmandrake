@@ -7,6 +7,7 @@ from bson import ObjectId
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from jwt.exceptions import DecodeError
+import datetime
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -162,6 +163,13 @@ async def editNovedad(novedad:Novedad, id:str, token: str = Depends(oauth2_schem
 def validate_token(token: str):
     try:
         decode_jwt = jwt.decode(token, options={"verify_signature": False})
+        
+        if 'exp' in decode_jwt:
+            fecha_exp_token = datetime.datetime.fromtimestamp(decode_jwt['exp']).strftime('%Y-%m-%d %H:%M:%S')
+            fecha_actual = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            if fecha_exp_token < fecha_actual:
+                raise HTTPException(status_code=401, detail='Token inválido')
 
         if 'resource_access' in decode_jwt:
             monstatuspage_data = decode_jwt['resource_access']['monstatuspage']
