@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import novedades, login
+from routers import novedades, login, etiquetas
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -18,5 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(etiquetas.router)
 app.include_router(novedades.router)
 app.include_router(login.router)
