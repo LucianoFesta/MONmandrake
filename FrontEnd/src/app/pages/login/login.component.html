@@ -4,9 +4,9 @@
   <form [formGroup]="formLogin" (ngSubmit)="submit()">
         <h2>Bitácora de Novedades</h2>
         <mat-form-field>
-            <mat-label>Correo Electrónico: </mat-label>
-            <input matInput placeholder="tu.correo@sancorsalud.com.ar" formControlName="email">
-            <mat-error *ngIf="isValidField('email')">* Por favor, ingresar un email válido (debe ser corporativo).</mat-error>
+            <mat-label>Usuario: </mat-label>
+            <input matInput formControlName="username">
+            <mat-error *ngIf="isValidField('username')">* Debes ingresar un usuario.</mat-error>
         </mat-form-field>
 
         <mat-form-field>

@@ -26,4 +26,9 @@ export class HomeComponent {
     // }
   ]
 
+  logout(){
+    localStorage.removeItem('userCurrent')
+    this.router.navigateByUrl(`/`);
+  }
+
 }

@@ -9,8 +9,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './pages/home/home.component';
 import { MaterialModule } from './material/material.module';
 import { MonitoreoComponent } from './pages/home/components/monitoreo/monitoreo.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared.module';
+import { AuthInterceptor } from './http-interceptor/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { SharedModule } from './shared/shared.module';
     MaterialModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

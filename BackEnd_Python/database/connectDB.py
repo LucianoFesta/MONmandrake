@@ -1,9 +1,12 @@
 from pymongo import MongoClient
-import os
-from dotenv import load_dotenv
+from configparser import ConfigParser
 
-load_dotenv()
-mongo_url = os.getenv("MONGODB_URI")
+configFile = 'configuration.ini'
+
+config = ConfigParser()
+config.read(configFile)
+
+mongo_url = config.get('configuration', 'MONGODB_URI')
 
 #Base de datos local
 db_client = MongoClient()

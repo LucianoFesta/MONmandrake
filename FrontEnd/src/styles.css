@@ -11,3 +11,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     --azul-claro: #d8e9ff;
     --verde-submit: rgb(52, 99, 52);
 }
+
+/* SnackBar */
+
+.mdc-snackbar__surface{
+    padding-right: 0 !important;
+}
+
+.mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+    color: white !important;
+}
+
+simple-snack-bar {
+    background-color: var(--azul-global);
+    color: white;
+}
