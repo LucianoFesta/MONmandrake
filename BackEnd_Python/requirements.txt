@@ -4,3 +4,5 @@ pymongo
 python-dotenv
 opentelemetry-distro
 opentelemetry-exporter-otlp
+PyJWT
+pydantic
