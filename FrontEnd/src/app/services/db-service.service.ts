@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Novedad } from '../interfaces/novedad';
+import { Etiqueta } from '../interfaces/etiqueta';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class DbService {
   getNovedadesByKeyword(newKeyword:string):Observable<Novedad[]>{
     return this.http.get<Novedad[]>('http://localhost:8000/novedades/listByKeyword', {params: { keyword:newKeyword }});
   }
-  
+
   getNovedadesByTags(tags:string[]):Observable<Novedad[]>{
     return this.http.get<Novedad[]>('http://localhost:8000/novedades/listByTags', {params: { tags:tags }});
   }
@@ -55,12 +56,34 @@ export class DbService {
     const body = new URLSearchParams();
     body.set('username', username);
     body.set('password', password);
-  
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
     });
-    
+
     return this.http.post('http://localhost:8000/login', body.toString(), { headers: headers });
   }
+
+    /********************************************************************************************* */
+  /***************************************RUTA ETIQUETAS *********************************************/
+  /********************************************************************************************* */
+
+  getEtiquetas():Observable<Etiqueta[]>{
+    return this.http.get<Etiqueta[]>('http://localhost:8000/etiquetas/listado');
+  }
+
+  createEtiqueta(etiqueta:Etiqueta){
+    return this.http.post('http://localhost:8000/etiquetas/crearEtiqueta',etiqueta);
+  }
+
+
+  editEtiqueta(etiqueta:Etiqueta, id:string){
+    return this.http.put(`http://localhost:8000/etiquetas/editarEtiqueta/${id}`,etiqueta);
+  }
+
+  deleteEtiqueta(id:string){
+    return this.http.delete(`http://localhost:8000/etiqueta/eliminarEtiqueta/${id}`);
+  }
+
 
 }

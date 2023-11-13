@@ -180,7 +180,7 @@ def validate_token(token: str):
                 raise HTTPException(status_code=403, detail='No tienes permisos para acceder a esta ruta')
         else:
             raise HTTPException(status_code=403, detail='No tienes permisos para acceder a esta ruta')
-    except jwt.exceptions.DecodeError:
+    except jwt.exceptions.DecodeError: 
         raise HTTPException(status_code=401, detail='Token inválido')
 
 

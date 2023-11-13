@@ -7,6 +7,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
+import { Etiqueta } from 'src/app/interfaces/etiqueta';
 import { DbService } from 'src/app/services/db-service.service';
 
 @Component({
@@ -25,6 +26,7 @@ export class FormNovedadComponent implements OnInit {
       startWith(null),
       map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
     );
+    this.getEtiquetas();
   }
 
   ngOnInit(): void {
@@ -61,7 +63,7 @@ export class FormNovedadComponent implements OnInit {
 
   public tags: string[] = [];
 
-  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Sql', 'MongoDB', 'Openshift', 'Servidor'];
+  public allTags: string[] = [];
 
   public formCreate:FormGroup = this.fb.group({
     autor: ['', [ Validators.required ]],
@@ -73,6 +75,7 @@ export class FormNovedadComponent implements OnInit {
     created_at:[''],
     updated_at:[''],
   });
+
 
 
   isValidField(field:string):boolean | null{
@@ -160,4 +163,11 @@ export class FormNovedadComponent implements OnInit {
     return this.allTags.filter(tag => tag.toLowerCase().includes(filterValue));
   }
 
+  getEtiquetas(){
+    this.dbService.getEtiquetas().subscribe(etiquetas=>{
+      etiquetas.forEach((etiqueta:Etiqueta)=>{
+        this.allTags.push(etiqueta.name);
+      })
+    })
+  }
 }
