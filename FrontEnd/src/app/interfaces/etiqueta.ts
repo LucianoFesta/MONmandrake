@@ -1,4 +1,4 @@
 export interface Etiqueta {
-  id:string;
+  id?:string;
   name: string;
 }

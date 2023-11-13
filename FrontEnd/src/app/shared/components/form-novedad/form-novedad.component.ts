@@ -82,6 +82,26 @@ export class FormNovedadComponent implements OnInit {
     return this.formCreate.controls[field].errors && this.formCreate.controls[field].touched;
   };
 
+   guardarEtiqueta() {
+    const etiquetasFormulario = this.formCreate.get('etiquetas')!.value;
+    const etiquetasSeparadas = etiquetasFormulario.toString().split(',').map((etiqueta: string) => etiqueta.trim());
+
+    etiquetasSeparadas.forEach((etiqueta: string) => {
+      if (!this.allTags.includes(etiqueta)) {
+        // Etiqueta no existe en allTags
+        const nuevaEtiqueta: Etiqueta = { name: etiqueta };
+        this.dbService.createEtiqueta(nuevaEtiqueta).subscribe(
+          () => {
+            console.log(`Etiqueta '${etiqueta}' creada exitosamente`);
+          },
+          error => {
+            console.error(`Error al crear etiqueta '${etiqueta}'`, error);
+          }
+        );
+      }
+    });
+  }
+
   saveNovedad(){
     if(this.formCreate.invalid){
       this.formCreate.markAllAsTouched();
@@ -96,6 +116,8 @@ export class FormNovedadComponent implements OnInit {
     newNovedad.responsable = this.formCreate.get('autor')?.value;
 
     console.log(newNovedad)
+
+    this.guardarEtiqueta();
 
     this.dbService.createNovedad(newNovedad).pipe(
       catchError((e) => {
