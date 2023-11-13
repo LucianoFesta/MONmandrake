@@ -1,10 +1,15 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, status, Query
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, HTTPException, status, Query, Depends
 from database.models.novedad import Novedad
 from database.connectDB import db_client
-from database.schemas.novedad import novedadSchema, novedadesSchema
+from database.schemas.novedad import novedadSchema
 from bson import ObjectId
+from fastapi.security import OAuth2PasswordBearer
+import jwt
+from jwt.exceptions import DecodeError
+import datetime
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 router = APIRouter(prefix="/novedades", 
                    tags=["novedades"], 
@@ -12,119 +17,171 @@ router = APIRouter(prefix="/novedades",
 
 
 @router.get("/listado", response_model=List[Novedad], status_code=status.HTTP_200_OK)
-async def findAll():
+async def findAll(token: str = Depends(oauth2_scheme)):
     
-    list = db_client.novedads.find()
+    validated_token = validate_token(token)
     
-    listSort = sorted(list, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
-    
-    result = [Novedad(**novedadSchema(item)) for item in listSort]
-    
-    return result
+    if validated_token:
+        
+        list = db_client.novedads.find()
+        listSort = sorted(list, key=lambda novedad: novedad['fechaNovedad'], reverse=True)
+        result = [Novedad(**novedadSchema(item)) for item in listSort]
+
+        return result
 
 
 @router.get("/listByKeyword", response_model=List[Novedad], status_code=status.HTTP_200_OK)
-async def getListFilteredByKeyword(keyword: str = Query(..., description='Palabra clave')):
+async def getListFilteredByKeyword(token: str = Depends(oauth2_scheme), keyword: str = Query(..., description='Palabra clave')):
+    validated_token = validate_token(token)
+    
     if not keyword:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existe palabra clave a buscar.')
     
-    query = {
-        "$or": [
-            {"descripcion": {'$regex': keyword, '$options': 'i'}},
-            {"titulo": {'$regex': keyword, '$options': 'i'}}
-        ]
-    }
+    if validated_token:
+        query = {
+            "$or": [
+                {"descripcion": {'$regex': keyword, '$options': 'i'}},
+                {"titulo": {'$regex': keyword, '$options': 'i'}}
+            ]
+        }
 
-    listFiltered = db_client.novedads.find(query)
-    listFiltered = sorted(listFiltered, key=lambda novedad: novedad['fechaNovedad'], reverse=True)
-    
-    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
-    
-    return result
+        listFiltered = db_client.novedads.find(query)
+        listFiltered = sorted(listFiltered, key=lambda novedad: novedad['fechaNovedad'], reverse=True)
+        
+        result = [Novedad(**novedadSchema(item)) for item in listFiltered]
+        
+        return result
 
 
 @router.get("/listByTags", response_model=List[Novedad], status_code=status.HTTP_200_OK)
-async def getListFilteredByTags(tags:List[str] = Query(..., description='Lista de Tags')):
+async def getListFilteredByTags(token: str = Depends(oauth2_scheme), tags:List[str] = Query(..., description='Lista de Tags')):
+    validated_token = validate_token(token)
+    
     if not tags:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags a buscar.')
     
-    listFiltered = db_client.novedads.find({'etiquetas':{'$all':tags}}) #All hace que devuelva los que tienen todos los tags.
-    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
+    if validated_token:
     
-    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
+        listFiltered = db_client.novedads.find({'etiquetas':{'$all':tags}}) #All hace que devuelva los que tienen todos los tags.
+        listFiltered = sorted(listFiltered, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
+        
+        result = [Novedad(**novedadSchema(item)) for item in listFiltered]
 
-    return result
+        return result
   
 
 @router.get("/listByKeywordAndTags", response_model=List[Novedad], status_code=status.HTTP_200_OK)
-async def getListFilteredByKeywordAndTags(keyword:str, tags:List[str] = Query(..., description='Palabra clave y tags')):
+async def getListFilteredByKeywordAndTags(keyword:str, tags:List[str] = Query(..., description='Palabra clave y tags'), token: str = Depends(oauth2_scheme)):
+    validated_token = validate_token(token)
+    
     if not keyword and tags:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No existen tags y palabra clave a buscar.')
     
-    query = {
-        "$or": [
-            {"descripcion": {'$regex': keyword, '$options': 'i'}},
-            {"titulo": {'$regex': keyword, '$options': 'i'}}
-        ],
-        'etiquetas':{'$all':tags}
-    }
+    if validated_token:
     
-    listFiltered = db_client.novedads.find(query)
-    listFiltered = sorted(listFiltered, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
-    
-    result = [Novedad(**novedadSchema(item)) for item in listFiltered]
-    
-    return result  
+        query = {
+            "$or": [
+                {"descripcion": {'$regex': keyword, '$options': 'i'}},
+                {"titulo": {'$regex': keyword, '$options': 'i'}}
+            ],
+            'etiquetas':{'$all':tags}
+        }
+        
+        listFiltered = db_client.novedads.find(query)
+        listFiltered = sorted(listFiltered, key=lambda novedad:novedad['fechaNovedad'], reverse=True)
+        
+        result = [Novedad(**novedadSchema(item)) for item in listFiltered]
+        
+        return result  
 
 
 @router.get("/buscarNovedad/{id}", response_model=Novedad, status_code=status.HTTP_200_OK)
-async def findById(id:str):
-    return buscarNovedad("_id", ObjectId(id))
+async def findById(id:str, token: str = Depends(oauth2_scheme)):
+    validated_token = validate_token(token)
+    
+    if validated_token:
+        
+        return buscarNovedad("_id", ObjectId(id))
 
 
 @router.post("/crearNovedad", response_model=Novedad, status_code=status.HTTP_201_CREATED)
-async def createNovedad(novedad:Novedad):
+async def createNovedad(novedad:Novedad, token: str = Depends(oauth2_scheme)):
+    validated_token = validate_token(token)
     
-    novedad_dict = dict(novedad)
-    
-    #Eliminamos el id null que agrega.
-    del novedad_dict["id"]
-    
-    #Obtenermos el id una vez que ya lo inserta en la db.
-    id = db_client.novedads.insert_one(novedad_dict).inserted_id
-    
-    #Buscamos ese usuario almacenado mediante el id creado por mongo (devuelve json).
-    #Lo transformamos en Novedad para devolverlo -> schema.
-    newNovedad = novedadSchema(db_client.novedads.find_one({"_id":id}))
-    
-    return Novedad(**newNovedad)
+    if validated_token:
+        novedad_dict = dict(novedad)
+        
+        #Eliminamos el id null que agrega.
+        del novedad_dict["id"]
+        
+        #Obtenermos el id una vez que ya lo inserta en la db.
+        id = db_client.novedads.insert_one(novedad_dict).inserted_id
+        
+        #Buscamos ese usuario almacenado mediante el id creado por mongo (devuelve json).
+        #Lo transformamos en Novedad para devolverlo -> schema.
+        newNovedad = novedadSchema(db_client.novedads.find_one({"_id":id}))
+        
+        return Novedad(**newNovedad)
 
 
 @router.delete("/eliminarNovedad/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def deleteNovedad(id:str):
+async def deleteNovedad(id:str, token: str = Depends(oauth2_scheme)):
     
     novedadExist = db_client.novedads.find_one_and_delete({"_id":ObjectId(id)})
     
-    if not novedadExist:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
-                            detail= 'No se encontró la novedad a eliminar.')
-    else:
-        return {"Eliminación":"La novedad ha sido eliminada."}
+    validated_token = validate_token(token)
+    
+    if validated_token:
+    
+        if not novedadExist:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
+                                detail= 'No se encontró la novedad a eliminar.')
+        else:
+            return {"Eliminación":"La novedad ha sido eliminada."}
     
 
 @router.put("/editarNovedad/{id}", response_model=Novedad, status_code=status.HTTP_200_OK)
-async def editNovedad(novedad:Novedad, id:str):
+async def editNovedad(novedad:Novedad, id:str, token: str = Depends(oauth2_scheme)):
     
     novedad_dict = dict(novedad)
     del novedad_dict["id"];
     
-    try:
-        db_client.novedads.find_one_and_replace({"_id":ObjectId(id)},novedad_dict)
-    except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
-                            detail= 'No se encontró la novedad a editar.')
+    validated_token = validate_token(token)
     
-    return buscarNovedad("_id", ObjectId(id))
+    if validated_token:
+         
+        try:
+            db_client.novedads.find_one_and_replace({"_id":ObjectId(id)},novedad_dict)
+        except:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
+                                detail= 'No se encontró la novedad a editar.')
+        
+        return buscarNovedad("_id", ObjectId(id))
+
+
+
+def validate_token(token: str):
+    try:
+        decode_jwt = jwt.decode(token, options={"verify_signature": False})
+        
+        if 'exp' in decode_jwt:
+            fecha_exp_token = datetime.datetime.fromtimestamp(decode_jwt['exp']).strftime('%Y-%m-%d %H:%M:%S')
+            fecha_actual = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            if fecha_exp_token < fecha_actual:
+                raise HTTPException(status_code=401, detail='Token inválido')
+
+        if 'resource_access' in decode_jwt:
+            monstatuspage_data = decode_jwt['resource_access']['monstatuspage']
+
+            if 'ADMIN' in monstatuspage_data['roles']:
+                return True
+            else:
+                raise HTTPException(status_code=403, detail='No tienes permisos para acceder a esta ruta')
+        else:
+            raise HTTPException(status_code=403, detail='No tienes permisos para acceder a esta ruta')
+    except jwt.exceptions.DecodeError:
+        raise HTTPException(status_code=401, detail='Token inválido')
 
 
 def buscarNovedad(campo:str, key):

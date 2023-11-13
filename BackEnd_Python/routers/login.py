@@ -1,14 +1,17 @@
 import requests
 import json
 from fastapi import APIRouter, Form, status, HTTPException
-import os
-from dotenv import load_dotenv
+from configparser import ConfigParser
 
-load_dotenv()
-client_id = os.getenv("client_id")
-cookie = os.getenv("cookie")
-keycloak_url = os.getenv("keycloak_url")
-grant_type= os.getenv("grant_type")
+configFile = 'configuration.ini'
+
+config = ConfigParser()
+config.read(configFile)
+
+client_id = config.get('configuration', 'client_id')
+cookie = config.get('configuration', 'cookie')
+keycloak_url = config.get('configuration', 'keycloak_url')
+grant_type= config.get('configuration', 'grant_type')
 
 
 router = APIRouter(prefix="/login", 
