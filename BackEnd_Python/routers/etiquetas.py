@@ -46,7 +46,7 @@ async def createEtiqueta(etiqueta:Etiqueta, token: str = Depends(oauth2_scheme))
         id = db_client.etiquetas.insert_one(etiqueta_dict).inserted_id
     
         #Buscamos ese usuario almacenado mediante el id creado por mongo (devuelve json).
-        #Lo transformamos en Novedad para devolverlo -> schema.
+        #Lo transformamos en Etiqueta para devolverlo -> schema.
         newEtiqueta = etiquetaSchema(db_client.etiquetas.find_one({"_id":id}))
     
         return Etiqueta(**newEtiqueta)

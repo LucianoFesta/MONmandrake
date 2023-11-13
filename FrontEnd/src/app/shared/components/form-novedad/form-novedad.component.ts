@@ -87,17 +87,10 @@ export class FormNovedadComponent implements OnInit {
     const etiquetasSeparadas = etiquetasFormulario.toString().split(',').map((etiqueta: string) => etiqueta.trim());
 
     etiquetasSeparadas.forEach((etiqueta: string) => {
-      if (!this.allTags.includes(etiqueta)) {
+      if (!this.allTags.includes(etiqueta) && etiqueta.length<2) {
         // Etiqueta no existe en allTags
         const nuevaEtiqueta: Etiqueta = { name: etiqueta };
-        this.dbService.createEtiqueta(nuevaEtiqueta).subscribe(
-          () => {
-            console.log(`Etiqueta '${etiqueta}' creada exitosamente`);
-          },
-          error => {
-            console.error(`Error al crear etiqueta '${etiqueta}'`, error);
-          }
-        );
+        this.dbService.createEtiqueta(nuevaEtiqueta);
       }
     });
   }

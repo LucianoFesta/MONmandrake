@@ -9,6 +9,7 @@ import { DbService } from 'src/app/services/db-service.service';
 import { DialogNovedadComponent } from 'src/app/shared/components/dialog-novedad/dialog-novedad.component';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Etiqueta } from 'src/app/interfaces/etiqueta';
 
 @Component({
   selector: 'app-cambios',
@@ -37,18 +38,18 @@ export class CambiosComponent implements OnInit {
 
   public tags: string[] = [];
 
-  public allTags: string[] = ['Abacom', 'Web', 'Jboss', 'Autorizador', 'Sql', 'MongoDB', 'Openshift', 'Servidor'];
-  
+  public allTags: string[] = [];
+
   public announcer = inject(LiveAnnouncer);
 
   public keyword:string = '';
 
   public tagSelected:string[] = [];
-  
+
   @ViewChild('tagInput')
   tagInput!: ElementRef<HTMLInputElement>;
-  
-  constructor( 
+
+  constructor(
     private dbService: DbService,
     public dialog: MatDialog
   ) {
@@ -56,25 +57,27 @@ export class CambiosComponent implements OnInit {
       startWith(null),
       map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
     );
+
+    this.getEtiquetas();
   }
 
   @ViewChild('searchTag')
   public searchInput!: ElementRef<HTMLInputElement>;
-  
-  
+
+
   ngOnInit(): void {
     this.getNovedades();
   }
 
   getNovedades(){
     this.dbService.getNovedades().subscribe( novedades => {
-  
+
       novedades.forEach((novedad:Novedad) => {
         const fecha = new Date(novedad.fechaNovedad);
         const mes = fecha.toLocaleString('es-ES',{month:'long'});
         const anio = fecha.getFullYear();
         const key = `${mes}-${anio}`;
-        
+
         if(!this.listNovedades[key]){
           this.listNovedades[key] = [];
         }
@@ -82,7 +85,7 @@ export class CambiosComponent implements OnInit {
       })
 
       this.filteredNovedades = this.listNovedades;
-  
+
       this.sorted = this.sortedList(this.listNovedades);
     })
 
@@ -90,10 +93,10 @@ export class CambiosComponent implements OnInit {
       this.loader = !this.loader;
     },1000)
   }
-  
+
   isEmpty(obj: object): boolean {
     return Object.keys(obj).length === 0;
-  }  
+  }
 
   openDialog(item:Novedad){
     this.dialog.open(DialogNovedadComponent,{
@@ -110,17 +113,17 @@ export class CambiosComponent implements OnInit {
     }
 
     if(this.keyword && this.tagSelected.length == 0){
-      
+
       this.dbService.getNovedadesByKeyword(newKeyword).subscribe( (novedades:Novedad[]) => {
         this.filteredNovedades = {};
-        
+
         novedades.forEach((novedad:Novedad) => {
-          
+
           const fecha = new Date(novedad.fechaNovedad);
           const mes = fecha.toLocaleString('es-ES',{month:'long'});
           const anio = fecha.getFullYear();
           const key = `${mes}-${anio}`;
-          
+
           if(!this.filteredNovedades[key]){
             this.filteredNovedades[key] = [];
           }
@@ -129,7 +132,7 @@ export class CambiosComponent implements OnInit {
         this.sorted = this.sortedList(this.filteredNovedades);
 
       });
-      
+
     }else if(this.keyword && this.tagSelected){
       this.searchByKeywordAndTags(this.tagSelected, newKeyword);
 
@@ -161,7 +164,7 @@ export class CambiosComponent implements OnInit {
           if(!this.filteredNovedades[key]){
             this.filteredNovedades[key] = [];
           }
-          this.filteredNovedades[key].push(novedad); 
+          this.filteredNovedades[key].push(novedad);
 
         });
         this.sorted = this.sortedList(this.filteredNovedades);
@@ -178,34 +181,34 @@ export class CambiosComponent implements OnInit {
     };
     this.sorted = this.sortedList(this.filteredNovedades);
   }
-  
+
   searchByKeywordAndTags(tags:string[], keyword:string){
 
     if(this.tagSelected.length > 0 && keyword){
       this.dbService.getNovedadesByKeywordAndTags(tags, keyword).subscribe((novedades:Novedad[]) => {
         this.filteredNovedades = {};
-        
+
         novedades.forEach((novedad:Novedad) => {
           const fecha = new Date(novedad.fechaNovedad);
           const mes = fecha.toLocaleString('es-ES',{month:'long'});
           const anio = fecha.getFullYear();
           const key = `${mes}-${anio}`;
-  
+
           if(!this.filteredNovedades[key]){
             this.filteredNovedades[key] = [];
           }
           this.filteredNovedades[key].push(novedad);
-  
+
         });
         this.sorted = this.sortedList(this.filteredNovedades);
-  
+
       });
     }else if(!keyword && tags){
       this.searchByTags(tags);
 
     }else{
       this.searchNovedadesByKeyword();
-      
+
     }
 
     this.sorted = this.sortedList(this.filteredNovedades);
@@ -223,11 +226,11 @@ export class CambiosComponent implements OnInit {
   openTags(){
     this.searchTags = !this.searchTags;
   }
-  
+
   add(event: MatChipInputEvent): void {
     const input = event.input;
     const value = (event.value || '').trim();
-  
+
     if (value) {
       this.tags.push(value);
     }
@@ -239,7 +242,7 @@ export class CambiosComponent implements OnInit {
     this.tagCtrl.setValue(null);
     this.searchByTags(this.tags);
   }
-  
+
 
   remove(tag: string): void {
     const index = this.tags.indexOf(tag);
@@ -263,7 +266,15 @@ export class CambiosComponent implements OnInit {
 
     return this.allTags.filter(tag => tag.toLowerCase().includes(filterValue));
   }
-  
+
+  getEtiquetas(){
+    this.dbService.getEtiquetas().subscribe(etiquetas=>{
+      etiquetas.forEach((etiqueta:Etiqueta)=>{
+        this.allTags.push(etiqueta.name);
+      })
+    })
+  }
+
 }
 
 
